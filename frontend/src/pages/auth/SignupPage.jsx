@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 
-const LoginPage = () => {
+const SignupPage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
@@ -11,13 +11,13 @@ const LoginPage = () => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
-    const handleLogin = async (e) => {
+    const handleSignup = async (e) => {
         e.preventDefault();
         setError(null);
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/auth/login', {
+            const response = await fetch('http://localhost:8000/api/v1/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -28,13 +28,11 @@ const LoginPage = () => {
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || 'Login failed');
+                throw new Error(data.message || 'Signup failed');
             }
 
-            // Optional: You can store the user data in localStorage or Context here securely
-            // localStorage.setItem('user', JSON.stringify(data.data));
-
-            navigate('/dashboard');
+            // Immediately redirect to login after successful signup
+            navigate('/login');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -46,7 +44,7 @@ const LoginPage = () => {
         container: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f5f5f5' },
         box: { width: '100%', maxWidth: '400px', padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
         input: { width: '100%', padding: '0.75rem', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' },
-        button: { width: '100%', padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
+        button: { width: '100%', padding: '0.75rem', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
         error: { color: 'red', marginBottom: '1rem', textAlign: 'center' },
         link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#007bff', textDecoration: 'none' }
     };
@@ -54,10 +52,10 @@ const LoginPage = () => {
     return (
         <div style={styles.container}>
             <div style={styles.box}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
+                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Create Account</h2>
                 {error && <div style={styles.error}>{error}</div>}
                 
-                <form onSubmit={handleLogin}>
+                <form onSubmit={handleSignup}>
                     <input 
                         type="email" 
                         name="email" 
@@ -77,16 +75,16 @@ const LoginPage = () => {
                         required 
                     />
                     <button type="submit" disabled={loading} style={styles.button}>
-                        {loading ? 'Logging in...' : 'Login'}
+                        {loading ? 'Creating account...' : 'Sign Up'}
                     </button>
                 </form>
 
-                <Link to="/signup" style={styles.link}>
-                    Don't have an account? Sign up
+                <Link to="/login" style={styles.link}>
+                    Already have an account? Login
                 </Link>
             </div>
         </div>
     );
 };
 
-export default LoginPage;
+export default SignupPage;
