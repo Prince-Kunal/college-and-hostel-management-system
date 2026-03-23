@@ -1,19 +1,23 @@
 import React from 'react';
 import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = () => {
-    // Check if user exists in localStorage
+const ProtectedRoute = ({ allowedRoles = [] }) => {
     const userString = localStorage.getItem('user');
-    
-    // Check if user string exists and is valid (not null)
     const isAuthenticated = !!userString;
-
-    // If not authenticated, immediately redirect back to login page
+    
+    // 1. Not logged in at all -> redirect to login
     if (!isAuthenticated) {
         return <Navigate to="/login" replace />;
     }
 
-    // Otherwise, render the child routes (Outlet)
+    const user = JSON.parse(userString);
+
+    // 2. Logged in, but lacking the required role
+    if (allowedRoles.length > 0 && !allowedRoles.includes(user.role)) {
+        return <Navigate to="/login" replace />;
+    }
+
+    // 3. Authenticated and authorized
     return <Outlet />;
 };
 

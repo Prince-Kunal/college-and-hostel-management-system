@@ -1,12 +1,13 @@
 import { auth } from '../firebase.js';
 import { 
   createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword 
+  signInWithEmailAndPassword,
+  updateProfile
 } from 'firebase/auth';
 
 export const signup = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, role } = req.body;
     
     if (!email || !password) {
       return res.status(400).json({ 
@@ -15,8 +16,13 @@ export const signup = async (req, res) => {
       });
     }
 
+    const unverifiedRole = role || 'student';
+
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
+
+    // Use displayName as a quick, zero-config way to store role for demo purposes.
+    await updateProfile(user, { displayName: unverifiedRole });
 
     return res.status(201).json({
       success: true,
@@ -24,6 +30,7 @@ export const signup = async (req, res) => {
       data: {
         uid: user.uid,
         email: user.email,
+        role: unverifiedRole
       }
     });
 
@@ -49,13 +56,13 @@ export const login = async (req, res) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // You can also return await user.getIdToken() if you need to pass a token to the frontend
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       data: {
         uid: user.uid,
         email: user.email,
+        role: user.displayName || 'student'
       }
     });
 

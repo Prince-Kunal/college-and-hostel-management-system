@@ -1,38 +1,73 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
+
+// Layout
 import Layout from '../components/layout/Layout';
+
+// Auth Components
 import ProtectedRoute from '../components/ProtectedRoute';
 
 // Pages
 import LoginPage from '../pages/auth/LoginPage';
 import SignupPage from '../pages/auth/SignupPage';
-import Dashboard from '../pages/Dashboard';
+
+// Dashboards
 import AdminDashboard from '../pages/admin/AdminDashboard';
 import StudentDashboard from '../pages/student/StudentDashboard';
 import FacultyDashboard from '../pages/faculty/FacultyDashboard';
 import HostelDashboard from '../pages/hostel/HostelDashboard';
 
 const AppRoutes = () => {
+    // Dynamic root redirect based on role
+    const getRootRedirect = () => {
+        const userString = localStorage.getItem('user');
+        if (userString) {
+            try {
+                const user = JSON.parse(userString);
+                if (user.role === 'admin') return '/admin';
+                if (user.role === 'faculty') return '/faculty';
+                if (user.role === 'student') return '/student';
+            } catch (e) {
+                // Return to login on json parse error
+            }
+        }
+        return '/login';
+    };
+
     return (
         <Routes>
+            {/* Public Routes */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
-            {/* Protected Routes */ }
-            <Route element={<ProtectedRoute />}>
-                <Route element={<Layout />}>
-                    {/* Redirect root to dashboard for now */}
-                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
-
-                    <Route path="/dashboard" element={<Dashboard />} />
+            {/* Layout Wrapper */}
+            <Route element={<Layout />}>
+                
+                {/* Admin Only */}
+                <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<AdminDashboard />} />
-                    <Route path="/student" element={<StudentDashboard />} />
+                </Route>
+
+                {/* Faculty Only (Admins typically can also view faculty pages) */}
+                <Route element={<ProtectedRoute allowedRoles={['faculty', 'admin']} />}>
                     <Route path="/faculty" element={<FacultyDashboard />} />
+                </Route>
+
+                {/* Student Only */}
+                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+                    <Route path="/student" element={<StudentDashboard />} />
+                </Route>
+                
+                {/* Multi-role access (Admin & Faculty) */}
+                <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty']} />}>
                     <Route path="/hostel" element={<HostelDashboard />} />
                 </Route>
+
+                {/* Redirect root domain `/` */}
+                <Route path="/" element={<Navigate to={getRootRedirect()} replace />} />
             </Route>
 
             {/* Catch-all route */}
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );
 };

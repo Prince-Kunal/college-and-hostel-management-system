@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import LightRays from '../../components/ui/LightRays';
+import BorderGlow from '../../components/ui/BorderGlow';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -31,10 +33,13 @@ const LoginPage = () => {
                 throw new Error(data.message || 'Login failed');
             }
 
-            // Optional: You can store the user data in localStorage or Context here securely
+            // Securely store the user object including their role
             localStorage.setItem('user', JSON.stringify(data.data));
 
-            navigate('/dashboard');
+            const role = data.data.role;
+            if (role === 'admin') navigate('/admin');
+            else if (role === 'faculty') navigate('/faculty');
+            else navigate('/student');
         } catch (err) {
             setError(err.message);
         } finally {
@@ -43,47 +48,73 @@ const LoginPage = () => {
     };
 
     const styles = {
-        container: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f5f5f5' },
-        box: { width: '100%', maxWidth: '400px', padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
+        container: { position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0f172a' },
+        wrapper: { position: 'relative', zIndex: 10, width: '100%', maxWidth: '400px' },
+        innerBox: { padding: '2rem', display: 'flex', flexDirection: 'column' },
         input: { width: '100%', padding: '0.75rem', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' },
-        button: { width: '100%', padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
+        button: { width: '100%', padding: '0.75rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
         error: { color: 'red', marginBottom: '1rem', textAlign: 'center' },
-        link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#007bff', textDecoration: 'none' }
+        link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#60a5fa', textDecoration: 'none' }
     };
 
     return (
         <div style={styles.container}>
-            <div style={styles.box}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Login</h2>
-                {error && <div style={styles.error}>{error}</div>}
-                
-                <form onSubmit={handleLogin}>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="Email Address" 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        style={styles.input} 
-                        required 
-                    />
-                    <input 
-                        type="password" 
-                        name="password" 
-                        placeholder="Password" 
-                        value={formData.password} 
-                        onChange={handleChange} 
-                        style={styles.input} 
-                        required 
-                    />
-                    <button type="submit" disabled={loading} style={styles.button}>
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+                <LightRays
+                  raysOrigin="top-center"
+                  raysColor="#3b82f6"
+                  raysSpeed={1.5}
+                  lightSpread={1.2}
+                  rayLength={2.5}
+                  pulsating={true}
+                  fadeDistance={0.8}
+                  mouseInfluence={0.2}
+                />
+            </div>
 
-                <Link to="/signup" style={styles.link}>
-                    Don't have an account? Sign up
-                </Link>
+            <div style={styles.wrapper}>
+                <BorderGlow 
+                    backgroundColor="rgba(30, 41, 59, 0.95)" 
+                    borderRadius={12} 
+                    glowColor="210 100 60" 
+                    glowRadius={30}
+                    glowIntensity={1.5}
+                    animated={true}
+                    colors={['#3b82f6', '#8b5cf6', '#ec4899']}
+                >
+                    <div style={styles.innerBox}>
+                        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'white' }}>Login</h2>
+                        {error && <div style={styles.error}>{error}</div>}
+                        
+                        <form onSubmit={handleLogin}>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Email Address" 
+                                value={formData.email} 
+                                onChange={handleChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="password" 
+                                name="password" 
+                                placeholder="Password" 
+                                value={formData.password} 
+                                onChange={handleChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <button type="submit" disabled={loading} style={styles.button}>
+                                {loading ? 'Logging in...' : 'Login'}
+                            </button>
+                        </form>
+
+                        <Link to="/signup" style={styles.link}>
+                            Don't have an account? Sign up
+                        </Link>
+                    </div>
+                </BorderGlow>
             </div>
         </div>
     );

@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import LightRays from '../../components/ui/LightRays';
+import BorderGlow from '../../components/ui/BorderGlow';
 
 const SignupPage = () => {
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({ email: '', password: '', role: 'student' });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
 
@@ -41,47 +43,79 @@ const SignupPage = () => {
     };
 
     const styles = {
-        container: { display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#f5f5f5' },
-        box: { width: '100%', maxWidth: '400px', padding: '2rem', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 4px 6px rgba(0,0,0,0.1)' },
+        container: { position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0f172a' },
+        wrapper: { position: 'relative', zIndex: 10, width: '100%', maxWidth: '400px' },
+        innerBox: { padding: '2rem', display: 'flex', flexDirection: 'column' },
         input: { width: '100%', padding: '0.75rem', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' },
-        button: { width: '100%', padding: '0.75rem', backgroundColor: '#28a745', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
+        select: { width: '100%', padding: '0.75rem', marginBottom: '1.5rem', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box', backgroundColor: 'white' },
+        button: { width: '100%', padding: '0.75rem', backgroundColor: '#22c55e', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
         error: { color: 'red', marginBottom: '1rem', textAlign: 'center' },
-        link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#007bff', textDecoration: 'none' }
+        link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#60a5fa', textDecoration: 'none' }
     };
 
     return (
         <div style={styles.container}>
-            <div style={styles.box}>
-                <h2 style={{ textAlign: 'center', marginBottom: '1.5rem' }}>Create Account</h2>
-                {error && <div style={styles.error}>{error}</div>}
-                
-                <form onSubmit={handleSignup}>
-                    <input 
-                        type="email" 
-                        name="email" 
-                        placeholder="Email Address" 
-                        value={formData.email} 
-                        onChange={handleChange} 
-                        style={styles.input} 
-                        required 
-                    />
-                    <input 
-                        type="password" 
-                        name="password" 
-                        placeholder="Password" 
-                        value={formData.password} 
-                        onChange={handleChange} 
-                        style={styles.input} 
-                        required 
-                    />
-                    <button type="submit" disabled={loading} style={styles.button}>
-                        {loading ? 'Creating account...' : 'Sign Up'}
-                    </button>
-                </form>
+            <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
+                <LightRays
+                  raysOrigin="top-center"
+                  raysColor="#22c55e"
+                  raysSpeed={1.5}
+                  lightSpread={1.2}
+                  rayLength={2.5}
+                  pulsating={true}
+                  fadeDistance={0.8}
+                  mouseInfluence={0.2}
+                />
+            </div>
 
-                <Link to="/login" style={styles.link}>
-                    Already have an account? Login
-                </Link>
+            <div style={styles.wrapper}>
+                <BorderGlow 
+                    backgroundColor="rgba(30, 41, 59, 0.95)" 
+                    borderRadius={12} 
+                    glowColor="142 100 40" 
+                    glowRadius={30}
+                    glowIntensity={1.5}
+                    animated={true}
+                    colors={['#22c55e', '#10b981', '#14b8a6']}
+                >
+                    <div style={styles.innerBox}>
+                        <h2 style={{ textAlign: 'center', marginBottom: '1.5rem', color: 'white' }}>Create Account</h2>
+                        {error && <div style={styles.error}>{error}</div>}
+                        
+                        <form onSubmit={handleSignup}>
+                            <input 
+                                type="email" 
+                                name="email" 
+                                placeholder="Email Address" 
+                                value={formData.email} 
+                                onChange={handleChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <input 
+                                type="password" 
+                                name="password" 
+                                placeholder="Password" 
+                                value={formData.password} 
+                                onChange={handleChange} 
+                                style={styles.input} 
+                                required 
+                            />
+                            <select name="role" value={formData.role} onChange={handleChange} style={styles.select}>
+                                <option value="student">Student</option>
+                                <option value="faculty">Faculty</option>
+                                <option value="admin">Admin</option>
+                            </select>
+                            <button type="submit" disabled={loading} style={styles.button}>
+                                {loading ? 'Creating account...' : 'Sign Up'}
+                            </button>
+                        </form>
+
+                        <Link to="/login" style={styles.link}>
+                            Already have an account? Login
+                        </Link>
+                    </div>
+                </BorderGlow>
             </div>
         </div>
     );
