@@ -51,8 +51,8 @@ const LoginPage = () => {
         container: { position: 'relative', overflow: 'hidden', display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', backgroundColor: '#0f172a' },
         wrapper: { position: 'relative', zIndex: 10, width: '100%', maxWidth: '400px' },
         innerBox: { padding: '2rem', display: 'flex', flexDirection: 'column' },
-        input: { width: '100%', padding: '0.75rem', marginBottom: '1rem', border: '1px solid #ccc', borderRadius: '4px', boxSizing: 'border-box' },
-        button: { width: '100%', padding: '0.75rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer', fontSize: '1rem' },
+        input: { width: '100%', padding: '0.75rem', marginBottom: '1rem', border: '1px solid rgba(255, 255, 255, 0.2)', backgroundColor: 'rgba(255, 255, 255, 0.1)', color: 'white', borderRadius: '8px', boxSizing: 'border-box', outline: 'none' },
+        button: { width: '100%', padding: '0.75rem', backgroundColor: '#3b82f6', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontSize: '1rem', marginTop: '0.5rem' },
         error: { color: 'red', marginBottom: '1rem', textAlign: 'center' },
         link: { display: 'block', textAlign: 'center', marginTop: '1rem', color: '#60a5fa', textDecoration: 'none' }
     };
