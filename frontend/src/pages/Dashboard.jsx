@@ -1,12 +1,23 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
     const navigate = useNavigate();
+    const [user, setUser] = useState(null);
+
+    useEffect(() => {
+        // Load user from localStorage immediately when Dashboard mounts
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
+    }, []);
 
     const handleLogout = () => {
-        // Clear any stored data here if necessary
-        navigate('/login');
+        // Clear stored data
+        localStorage.removeItem('user');
+        // Redirect back to login
+        navigate('/login', { replace: true });
     };
 
     const styles = {
@@ -19,14 +30,18 @@ const Dashboard = () => {
     return (
         <div style={styles.container}>
             <header style={styles.header}>
-                <h1>Welcome to Dashboard</h1>
+                <h1>Dashboard</h1>
                 <button onClick={handleLogout} style={styles.button}>Logout</button>
             </header>
             
             <main>
                 <div style={styles.card}>
-                    <h2>Authentication Successful!</h2>
-                    <p>You have successfully logged in via the React frontend.</p>
+                    <h2>Welcome back!</h2>
+                    {user ? (
+                        <p>You are logged in securely as: <strong>{user.email}</strong></p>
+                    ) : (
+                        <p>Loading user profile...</p>
+                    )}
                 </div>
             </main>
         </div>

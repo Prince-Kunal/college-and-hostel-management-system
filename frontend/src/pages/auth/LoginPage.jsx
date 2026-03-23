@@ -32,7 +32,7 @@ const LoginPage = () => {
             }
 
             // Optional: You can store the user data in localStorage or Context here securely
-            // localStorage.setItem('user', JSON.stringify(data.data));
+            localStorage.setItem('user', JSON.stringify(data.data));
 
             navigate('/dashboard');
         } catch (err) {

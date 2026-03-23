@@ -1,5 +1,6 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Layout from '../components/layout/Layout';
+import ProtectedRoute from '../components/ProtectedRoute';
 
 // Pages
 import LoginPage from '../pages/auth/LoginPage';
@@ -16,16 +17,18 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
-            {/* Protected Routes inside Layout */}
-            <Route element={<Layout />}>
-                {/* Redirect root to login for now */}
-                <Route path="/" element={<Navigate to="/login" replace />} />
+            {/* Protected Routes */ }
+            <Route element={<ProtectedRoute />}>
+                <Route element={<Layout />}>
+                    {/* Redirect root to dashboard for now */}
+                    <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-                <Route path="/dashboard" element={<Dashboard />} />
-                <Route path="/admin" element={<AdminDashboard />} />
-                <Route path="/student" element={<StudentDashboard />} />
-                <Route path="/faculty" element={<FacultyDashboard />} />
-                <Route path="/hostel" element={<HostelDashboard />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                    <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/student" element={<StudentDashboard />} />
+                    <Route path="/faculty" element={<FacultyDashboard />} />
+                    <Route path="/hostel" element={<HostelDashboard />} />
+                </Route>
             </Route>
 
             {/* Catch-all route */}
