@@ -128,6 +128,18 @@ const AdminDashboard = () => {
                 </div>
 
                 <div style={styles.card}>
+                    <h2>Quick Navigation</h2>
+                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        <button onClick={() => navigate('/batches')} style={{ ...styles.button, backgroundColor: '#0d6efd' }}>
+                            Manage External Batches
+                        </button>
+                        <button onClick={() => navigate('/batches/create')} style={{ ...styles.button, backgroundColor: '#198754' }}>
+                            Create New Batch
+                        </button>
+                    </div>
+                </div>
+
+                <div style={styles.card}>
                     <h2>Create New User</h2>
                     {createError && <p style={{ color: 'red', marginBottom: '1rem' }}>{createError}</p>}
                     <form onSubmit={handleCreateUser} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>

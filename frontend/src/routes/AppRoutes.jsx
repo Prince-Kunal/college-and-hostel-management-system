@@ -16,6 +16,10 @@ import StudentDashboard from '../pages/student/StudentDashboard';
 import FacultyDashboard from '../pages/faculty/FacultyDashboard';
 import HostelDashboard from '../pages/hostel/HostelDashboard';
 
+// Admin Modules
+import BatchList from '../pages/admin/BatchList';
+import CreateBatch from '../pages/admin/CreateBatch';
+
 const AppRoutes = () => {
     // Dynamic root redirect based on role
     const getRootRedirect = () => {
@@ -45,6 +49,8 @@ const AppRoutes = () => {
                 {/* Admin Only */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/batches" element={<BatchList />} />
+                    <Route path="/batches/create" element={<CreateBatch />} />
                 </Route>
 
                 {/* Faculty Only (Admins typically can also view faculty pages) */}
