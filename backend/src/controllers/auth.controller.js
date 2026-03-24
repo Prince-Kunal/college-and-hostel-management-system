@@ -1,9 +1,9 @@
-import { auth } from '../firebase.js';
+import { auth, db } from '../firebase.js';
 import { 
   createUserWithEmailAndPassword, 
-  signInWithEmailAndPassword,
-  updateProfile
+  signInWithEmailAndPassword
 } from 'firebase/auth';
+import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export const signup = async (req, res) => {
   try {
@@ -16,13 +16,18 @@ export const signup = async (req, res) => {
       });
     }
 
-    const unverifiedRole = role || 'student';
+    const assignedRole = role || 'student';
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
-    // Use displayName as a quick, zero-config way to store role for demo purposes.
-    await updateProfile(user, { displayName: unverifiedRole });
+    // Store user securely entirely within Firestore
+    await setDoc(doc(db, 'users', user.uid), {
+      uid: user.uid,
+      email: user.email,
+      role: assignedRole,
+      createdAt: new Date().toISOString()
+    });
 
     return res.status(201).json({
       success: true,
@@ -30,7 +35,7 @@ export const signup = async (req, res) => {
       data: {
         uid: user.uid,
         email: user.email,
-        role: unverifiedRole
+        role: assignedRole
       }
     });
 
@@ -56,13 +61,24 @@ export const login = async (req, res) => {
     const userCredential = await signInWithEmailAndPassword(auth, email, password);
     const user = userCredential.user;
 
+    // Fetch user document from Firestore to retrieve authoritative role
+    const userDocRef = doc(db, 'users', user.uid);
+    const userDocSnap = await getDoc(userDocRef);
+
+    let role = 'student'; // Fallback role 
+    if (userDocSnap.exists()) {
+      role = userDocSnap.data().role || 'student';
+    } else {
+      console.warn(`Notice: No Firestore document found for authenticated user: ${user.uid}`);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Login successful',
       data: {
         uid: user.uid,
         email: user.email,
-        role: user.displayName || 'student'
+        role: role
       }
     });
 
