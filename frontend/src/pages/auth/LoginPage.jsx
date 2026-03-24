@@ -44,7 +44,9 @@ const LoginPage = () => {
         } catch (err) {
             // Clean up error message
             const errMsg = err.message || '';
-            if (errMsg.includes('invalid-credential') || errMsg.includes('user-not-found') || errMsg.includes('wrong-password')) {
+            if (errMsg.includes('disabled')) {
+                setError(errMsg); // Show exact standard disabled rejection
+            } else if (errMsg.includes('invalid-credential') || errMsg.includes('user-not-found') || errMsg.includes('wrong-password')) {
                 setError('Invalid Credentials');
             } else {
                 setError('Login failed. Please try again.');

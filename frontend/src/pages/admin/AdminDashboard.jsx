@@ -8,6 +8,10 @@ const AdminDashboard = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    const [newUserForm, setNewUserForm] = useState({ email: '', password: '', role: 'student' });
+    const [creatingUser, setCreatingUser] = useState(false);
+    const [createError, setCreateError] = useState(null);
+
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
         if (storedUser) setUser(JSON.parse(storedUser));
@@ -48,9 +52,50 @@ const AdminDashboard = () => {
         }
     };
 
+    const handleDeleteUser = async (userId) => {
+        if (!window.confirm("Are you sure you want to disable this user?")) return;
+        
+        try {
+            const res = await fetch(`http://localhost:8000/api/v1/admin/users/${userId}`, {
+                method: 'DELETE'
+            });
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.message || 'Failed to disable user');
+            
+            fetchUsers();
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login', { replace: true });
+    };
+
+    const handleCreateUser = async (e) => {
+        e.preventDefault();
+        setCreatingUser(true);
+        setCreateError(null);
+        try {
+            const res = await fetch('http://localhost:8000/api/v1/auth/signup', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(newUserForm)
+            });
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.message || 'Failed to create user');
+            
+            // Clear form and refresh list
+            setNewUserForm({ email: '', password: '', role: 'student' });
+            fetchUsers();
+        } catch (err) {
+            setCreateError(err.message);
+        } finally {
+            setCreatingUser(false);
+        }
     };
 
     const styles = {
@@ -83,6 +128,41 @@ const AdminDashboard = () => {
                 </div>
 
                 <div style={styles.card}>
+                    <h2>Create New User</h2>
+                    {createError && <p style={{ color: 'red', marginBottom: '1rem' }}>{createError}</p>}
+                    <form onSubmit={handleCreateUser} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            required
+                            value={newUserForm.email}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            required
+                            value={newUserForm.password}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
+                        />
+                        <select
+                            value={newUserForm.role}
+                            onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
+                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
+                        >
+                            <option value="student">Student</option>
+                            <option value="faculty">Faculty</option>
+                            <option value="admin">Admin</option>
+                        </select>
+                        <button type="submit" disabled={creatingUser} style={{ ...styles.button, backgroundColor: '#198754' }}>
+                            {creatingUser ? 'Creating...' : 'Create User'}
+                        </button>
+                    </form>
+                </div>
+
+                <div style={styles.card}>
                     <h2>User Management</h2>
                     {loading && <p>Loading users...</p>}
                     {error && <p style={{ color: 'red' }}>{error}</p>}
@@ -97,6 +177,7 @@ const AdminDashboard = () => {
                                         <tr>
                                             <th style={styles.th}>Email</th>
                                             <th style={styles.th}>Role</th>
+                                            <th style={styles.th}>Actions</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -120,6 +201,14 @@ const AdminDashboard = () => {
                                                         <option value="faculty">faculty</option>
                                                         <option value="admin">admin</option>
                                                     </select>
+                                                </td>
+                                                <td style={styles.td}>
+                                                    <button 
+                                                        onClick={() => handleDeleteUser(u.id)}
+                                                        style={{...styles.button, backgroundColor: '#dc3545', padding: '0.25rem 0.5rem', fontSize: '0.8rem'}}
+                                                    >
+                                                        Disable
+                                                    </button>
                                                 </td>
                                             </tr>
                                         ))}

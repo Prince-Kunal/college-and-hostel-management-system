@@ -9,11 +9,13 @@ export const getUsers = async (req, res) => {
     const users = [];
     snapshot.forEach(doc => {
       const data = doc.data();
-      users.push({
-        id: doc.id,
-        email: data.email,
-        role: data.role
-      });
+      if (data.role !== 'deleted') {
+        users.push({
+          id: doc.id,
+          email: data.email,
+          role: data.role
+        });
+      }
     });
 
     return res.status(200).json({
@@ -48,6 +50,24 @@ export const updateUserRole = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: error.message || 'Error occurred while updating user role'
+    });
+  }
+};
+
+export const deleteUser = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const userRef = doc(db, 'users', id);
+    await updateDoc(userRef, { role: 'deleted' });
+
+    return res.status(200).json({
+      success: true,
+      message: 'User successfully disabled'
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message || 'Error occurred while deleting user'
     });
   }
 };

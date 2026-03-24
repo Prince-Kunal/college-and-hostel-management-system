@@ -68,6 +68,12 @@ export const login = async (req, res) => {
     let role = 'student'; // Fallback role 
     if (userDocSnap.exists()) {
       role = userDocSnap.data().role || 'student';
+      if (role === 'deleted') {
+        return res.status(403).json({
+          success: false,
+          message: 'Account has been disabled.'
+        });
+      }
     } else {
       console.warn(`Notice: No Firestore document found for authenticated user: ${user.uid}`);
     }
