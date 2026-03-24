@@ -30,6 +30,24 @@ const AdminDashboard = () => {
         }
     };
 
+    const updateUserRole = async (userId, newRole) => {
+        try {
+            const res = await fetch(`http://localhost:8000/api/v1/admin/users/${userId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ role: newRole })
+            });
+            const data = await res.json();
+            
+            if (!res.ok) throw new Error(data.message || 'Failed to update user role');
+            
+            // Update UI state
+            setUsersList(usersList.map(u => u.id === userId ? { ...u, role: newRole } : u));
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login', { replace: true });
@@ -86,13 +104,22 @@ const AdminDashboard = () => {
                                             <tr key={u.id}>
                                                 <td style={styles.td}>{u.email}</td>
                                                 <td style={styles.td}>
-                                                    <span style={{
-                                                        ...styles.badge, 
-                                                        marginLeft: 0, 
-                                                        backgroundColor: u.role === 'admin' ? '#dc3545' : u.role === 'faculty' ? '#fd7e14' : '#198754'
-                                                    }}>
-                                                        {u.role}
-                                                    </span>
+                                                    <select 
+                                                        value={u.role} 
+                                                        onChange={(e) => updateUserRole(u.id, e.target.value)}
+                                                        style={{
+                                                            padding: '0.25rem 0.5rem',
+                                                            borderRadius: '4px',
+                                                            border: '1px solid #ccc',
+                                                            backgroundColor: u.role === 'admin' ? '#f8d7da' : u.role === 'faculty' ? '#ffeeba' : '#d1e7dd',
+                                                            color: '#000',
+                                                            cursor: 'pointer'
+                                                        }}
+                                                    >
+                                                        <option value="student">student</option>
+                                                        <option value="faculty">faculty</option>
+                                                        <option value="admin">admin</option>
+                                                    </select>
                                                 </td>
                                             </tr>
                                         ))}

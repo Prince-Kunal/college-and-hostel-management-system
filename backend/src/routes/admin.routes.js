@@ -1,8 +1,9 @@
 import { Router } from 'express';
-import { getUsers } from '../controllers/admin.controller.js';
+import { getUsers, updateUserRole } from '../controllers/admin.controller.js';
 
 const router = Router();
 
 router.get('/users', getUsers);
+router.put('/users/:id', updateUserRole);
 
 export default router;
