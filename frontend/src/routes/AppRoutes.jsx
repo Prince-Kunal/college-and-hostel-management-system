@@ -19,6 +19,10 @@ import HostelDashboard from '../pages/hostel/HostelDashboard';
 // Admin Modules
 import BatchList from '../pages/admin/BatchList';
 import CreateBatch from '../pages/admin/CreateBatch';
+import SubjectList from '../pages/admin/SubjectList';
+import CreateSubject from '../pages/admin/CreateSubject';
+import AssignmentList from '../pages/admin/AssignmentList';
+import CreateAssignment from '../pages/admin/CreateAssignment';
 
 const AppRoutes = () => {
     // Dynamic root redirect based on role
@@ -51,6 +55,10 @@ const AppRoutes = () => {
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/batches" element={<BatchList />} />
                     <Route path="/batches/create" element={<CreateBatch />} />
+                    <Route path="/subjects" element={<SubjectList />} />
+                    <Route path="/subjects/create" element={<CreateSubject />} />
+                    <Route path="/assignments" element={<AssignmentList />} />
+                    <Route path="/assignments/create" element={<CreateAssignment />} />
                 </Route>
 
                 {/* Faculty Only (Admins typically can also view faculty pages) */}

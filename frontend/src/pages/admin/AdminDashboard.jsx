@@ -136,6 +136,18 @@ const AdminDashboard = () => {
                         <button onClick={() => navigate('/batches/create')} style={{ ...styles.button, backgroundColor: '#198754' }}>
                             Create New Batch
                         </button>
+                        <button onClick={() => navigate('/subjects')} style={{ ...styles.button, backgroundColor: '#6f42c1' }}>
+                            Manage Subjects
+                        </button>
+                        <button onClick={() => navigate('/subjects/create')} style={{ ...styles.button, backgroundColor: '#fd7e14' }}>
+                            Create New Subject
+                        </button>
+                        <button onClick={() => navigate('/assignments')} style={{ ...styles.button, backgroundColor: '#0dcaf0', color: '#000' }}>
+                            View Faculty Matrix
+                        </button>
+                        <button onClick={() => navigate('/assignments/create')} style={{ ...styles.button, backgroundColor: '#20c997' }}>
+                            Allocate Map
+                        </button>
                     </div>
                 </div>
 
