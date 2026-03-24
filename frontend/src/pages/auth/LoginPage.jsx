@@ -8,6 +8,7 @@ const LoginPage = () => {
     const [formData, setFormData] = useState({ email: '', password: '' });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [raysColor, setRaysColor] = useState('#3b82f6');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -41,7 +42,19 @@ const LoginPage = () => {
             else if (role === 'faculty') navigate('/faculty');
             else navigate('/student');
         } catch (err) {
-            setError(err.message);
+            // Clean up error message
+            const errMsg = err.message || '';
+            if (errMsg.includes('invalid-credential') || errMsg.includes('user-not-found') || errMsg.includes('wrong-password')) {
+                setError('Invalid Credentials');
+            } else {
+                setError('Login failed. Please try again.');
+            }
+
+            // Turn rays red for 5 seconds
+            setRaysColor('#ef4444');
+            setTimeout(() => {
+                setRaysColor('#3b82f6');
+            }, 5000);
         } finally {
             setLoading(false);
         }
@@ -62,7 +75,7 @@ const LoginPage = () => {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
                 <LightRays
                   raysOrigin="top-center"
-                  raysColor="#3b82f6"
+                  raysColor={raysColor}
                   raysSpeed={1.5}
                   lightSpread={1.2}
                   rayLength={2.5}

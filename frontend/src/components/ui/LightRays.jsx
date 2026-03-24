@@ -54,6 +54,8 @@ const LightRays = ({
   const animationIdRef = useRef(null);
   const meshRef = useRef(null);
   const cleanupFunctionRef = useRef(null);
+  const targetColorRef = useRef(hexToRgb(raysColor));
+  const smoothColorRef = useRef([...hexToRgb(raysColor)]);
   const [isVisible, setIsVisible] = useState(false);
   const observerRef = useRef(null);
 
@@ -217,7 +219,7 @@ void main() {
         rayPos: { value: [0, 0] },
         rayDir: { value: [0, 1] },
 
-        raysColor: { value: hexToRgb(raysColor) },
+        raysColor: { value: smoothColorRef.current },
         raysSpeed: { value: raysSpeed },
         lightSpread: { value: lightSpread },
         rayLength: { value: rayLength },
@@ -275,6 +277,12 @@ void main() {
           uniforms.mousePos.value = [smoothMouseRef.current.x, smoothMouseRef.current.y];
         }
 
+        const colorSmoothing = 0.95;
+        smoothColorRef.current[0] = smoothColorRef.current[0] * colorSmoothing + targetColorRef.current[0] * (1 - colorSmoothing);
+        smoothColorRef.current[1] = smoothColorRef.current[1] * colorSmoothing + targetColorRef.current[1] * (1 - colorSmoothing);
+        smoothColorRef.current[2] = smoothColorRef.current[2] * colorSmoothing + targetColorRef.current[2] * (1 - colorSmoothing);
+        uniforms.raysColor.value = [smoothColorRef.current[0], smoothColorRef.current[1], smoothColorRef.current[2]];
+
         try {
           renderer.render({ scene: mesh });
           animationIdRef.current = requestAnimationFrame(loop);
@@ -329,7 +337,6 @@ void main() {
   }, [
     isVisible,
     raysOrigin,
-    raysColor,
     raysSpeed,
     lightSpread,
     rayLength,
@@ -348,7 +355,7 @@ void main() {
     const u = uniformsRef.current;
     const renderer = rendererRef.current;
 
-    u.raysColor.value = hexToRgb(raysColor);
+    targetColorRef.current = hexToRgb(raysColor);
     u.raysSpeed.value = raysSpeed;
     u.lightSpread.value = lightSpread;
     u.rayLength.value = rayLength;

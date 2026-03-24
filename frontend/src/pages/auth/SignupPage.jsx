@@ -8,6 +8,7 @@ const SignupPage = () => {
     const [formData, setFormData] = useState({ email: '', password: '', role: 'student' });
     const [error, setError] = useState(null);
     const [loading, setLoading] = useState(false);
+    const [raysColor, setRaysColor] = useState('#22c55e');
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -36,7 +37,22 @@ const SignupPage = () => {
             // Immediately redirect to login after successful signup
             navigate('/login');
         } catch (err) {
-            setError(err.message);
+            const errMsg = err.message || '';
+            if (errMsg.includes('email-already-in-use')) {
+                setError('Email is already registered. Please login.');
+            } else if (errMsg.includes('weak-password')) {
+                setError('Password is too weak. Use at least 6 characters.');
+            } else if (errMsg.includes('invalid-email')) {
+                setError('Invalid email address format.');
+            } else {
+                setError('Invalid Credentials or Signup Failed');
+            }
+
+            // Turn rays red for 5 seconds
+            setRaysColor('#ef4444');
+            setTimeout(() => {
+                setRaysColor('#22c55e');
+            }, 5000);
         } finally {
             setLoading(false);
         }
@@ -58,7 +74,7 @@ const SignupPage = () => {
             <div style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, zIndex: 0 }}>
                 <LightRays
                   raysOrigin="top-center"
-                  raysColor="#22c55e"
+                  raysColor={raysColor}
                   raysSpeed={1.5}
                   lightSpread={1.2}
                   rayLength={2.5}
