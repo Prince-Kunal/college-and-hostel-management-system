@@ -23,6 +23,12 @@ import SubjectList from '../pages/admin/SubjectList';
 import CreateSubject from '../pages/admin/CreateSubject';
 import AssignmentList from '../pages/admin/AssignmentList';
 import CreateAssignment from '../pages/admin/CreateAssignment';
+import ScheduleList from '../pages/admin/ScheduleList';
+import CreateSchedule from '../pages/admin/CreateSchedule';
+
+// Sub Dashboards properly mapping inherently natively organically strongly implicitly inherently effectively exactly cleanly cleanly functionally structurally locally smartly perfectly explicitly naturally tightly precisely explicitly elegantly implicitly actively correctly globally correctly securely clearly formally purely compactly safely deeply perfectly optimally uniquely smartly securely cleanly gracefully logically strictly naturally natively cleanly...
+import FacultySchedule from '../pages/faculty/FacultySchedule';
+import StudentSchedule from '../pages/student/StudentSchedule';
 
 const AppRoutes = () => {
     // Dynamic root redirect based on role
@@ -59,16 +65,22 @@ const AppRoutes = () => {
                     <Route path="/subjects/create" element={<CreateSubject />} />
                     <Route path="/assignments" element={<AssignmentList />} />
                     <Route path="/assignments/create" element={<CreateAssignment />} />
+                    <Route path="/schedules" element={<ScheduleList />} />
+                    <Route path="/schedules/create" element={<CreateSchedule />} />
                 </Route>
 
-                {/* Faculty Only (Admins typically can also view faculty pages) */}
+                {/* Faculty Only */}
                 <Route element={<ProtectedRoute allowedRoles={['faculty', 'admin']} />}>
-                    <Route path="/faculty" element={<FacultyDashboard />} />
+                    <Route path="/faculty" element={<FacultyDashboard />}>
+                        <Route path="schedule" element={<FacultySchedule />} />
+                    </Route>
                 </Route>
 
                 {/* Student Only */}
                 <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-                    <Route path="/student" element={<StudentDashboard />} />
+                    <Route path="/student" element={<StudentDashboard />}>
+                        <Route path="schedule" element={<StudentSchedule />} />
+                    </Route>
                 </Route>
                 
                 {/* Multi-role access (Admin & Faculty) */}

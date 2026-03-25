@@ -148,6 +148,12 @@ const AdminDashboard = () => {
                         <button onClick={() => navigate('/assignments/create')} style={{ ...styles.button, backgroundColor: '#20c997' }}>
                             Allocate Map
                         </button>
+                        <button onClick={() => navigate('/schedules')} style={{ ...styles.button, backgroundColor: '#343a40' }}>
+                            Manage Global Schedules
+                        </button>
+                        <button onClick={() => navigate('/schedules/create')} style={{ ...styles.button, backgroundColor: '#0d6efd' }}>
+                            Deploy Target Schedule block
+                        </button>
                     </div>
                 </div>
 

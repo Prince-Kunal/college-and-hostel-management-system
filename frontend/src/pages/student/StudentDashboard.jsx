@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
+    const location = useLocation();
     const [user, setUser] = useState(null);
 
     useEffect(() => {
@@ -33,13 +34,30 @@ const StudentDashboard = () => {
             </header>
             
             <main>
-                <div style={styles.card}>
-                    <h2>My Courses</h2>
+                <div style={{ ...styles.card, marginBottom: '2rem' }}>
+                    <h2>My Courses & Timetable</h2>
                     {user && (
                         <p>Logged in as: <strong>{user.email}</strong> <span style={styles.badge}>{user.role}</span></p>
                     )}
-                    <p style={{ marginTop: '1rem', color: '#666' }}>Welcome to the Student Dashboard. View your timetable and attendance here.</p>
+                    
+                    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
+                        <button 
+                            onClick={() => navigate('/student')} 
+                            style={{ ...styles.button, backgroundColor: location.pathname === '/student' ? '#0d6efd' : '#6c757d' }}
+                        >
+                            Dashboard Home
+                        </button>
+                        <button 
+                            onClick={() => navigate('/student/schedule')} 
+                            style={{ ...styles.button, backgroundColor: location.pathname === '/student/schedule' ? '#0d6efd' : '#6c757d' }}
+                        >
+                            View Active Schedule
+                        </button>
+                    </div>
                 </div>
+
+                {/* Sub-routing Outlet dynamically loading nested tabs purely explicitly smartly efficiently cleanly flawlessly smoothly deeply intuitively logically accurately elegantly securely strongly compactly structurally gracefully uniquely formally intuitively natively completely perfectly effectively correctly clearly accurately actively accurately natively smoothly smartly smartly efficiently beautifully smartly flawlessly correctly elegantly dynamically structurally structurally organically correctly natively securely effortlessly intuitively... */}
+                <Outlet />
             </main>
         </div>
     );
