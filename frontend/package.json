@@ -10,6 +10,9 @@
         "preview": "vite preview"
     },
     "dependencies": {
+        "@livekit/components-react": "^2.9.20",
+        "@livekit/components-styles": "^1.2.0",
+        "livekit-client": "^2.18.4",
         "ogl": "^1.0.11",
         "react": "^18.2.0",
         "react-dom": "^18.2.0",

@@ -133,6 +133,9 @@ const AdminDashboard = () => {
                         <button onClick={() => navigate('/batches')} style={{ ...styles.button, backgroundColor: '#0d6efd' }}>
                             Manage External Batches
                         </button>
+                        <button onClick={() => navigate('/batches-details')} style={{ ...styles.button, backgroundColor: '#ffc107', color: '#000' }}>
+                            View Batch Details Overview
+                        </button>
                         <button onClick={() => navigate('/batches/create')} style={{ ...styles.button, backgroundColor: '#198754' }}>
                             Create New Batch
                         </button>

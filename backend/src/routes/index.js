@@ -4,7 +4,9 @@ import adminRoutes from './admin.routes.js';
 import batchRoutes from './batch.routes.js';
 import subjectRoutes from './subject.routes.js';
 import facultyAssignmentRoutes from './facultyAssignment.routes.js';
+import facultyRoutes from './faculty.routes.js';
 import scheduleRoutes from './schedule.routes.js';
+import liveRoutes from './live.routes.js';
 
 const router = Router();
 
@@ -14,6 +16,8 @@ router.use('/admin', adminRoutes);
 router.use('/batches', batchRoutes);
 router.use('/subjects', subjectRoutes);
 router.use('/faculty-assignments', facultyAssignmentRoutes);
+router.use('/faculty', facultyRoutes);
 router.use('/schedules', scheduleRoutes);
+router.use('/live', liveRoutes);
 
 export default router;

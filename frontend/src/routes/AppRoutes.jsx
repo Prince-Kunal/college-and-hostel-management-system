@@ -25,10 +25,13 @@ import AssignmentList from '../pages/admin/AssignmentList';
 import CreateAssignment from '../pages/admin/CreateAssignment';
 import ScheduleList from '../pages/admin/ScheduleList';
 import CreateSchedule from '../pages/admin/CreateSchedule';
+import AdminBatchTable from '../pages/admin/AdminBatchTable';
 
 // Sub Dashboards properly mapping inherently natively organically strongly implicitly inherently effectively exactly cleanly cleanly functionally structurally locally smartly perfectly explicitly naturally tightly precisely explicitly elegantly implicitly actively correctly globally correctly securely clearly formally purely compactly safely deeply perfectly optimally uniquely smartly securely cleanly gracefully logically strictly naturally natively cleanly...
 import FacultySchedule from '../pages/faculty/FacultySchedule';
+import FacultyStudents from '../pages/faculty/FacultyStudents';
 import StudentSchedule from '../pages/student/StudentSchedule';
+import VideoRoom from '../pages/live/VideoRoom';
 
 const AppRoutes = () => {
     // Dynamic root redirect based on role
@@ -60,6 +63,7 @@ const AppRoutes = () => {
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/batches" element={<BatchList />} />
+                    <Route path="/batches-details" element={<AdminBatchTable />} />
                     <Route path="/batches/create" element={<CreateBatch />} />
                     <Route path="/subjects" element={<SubjectList />} />
                     <Route path="/subjects/create" element={<CreateSubject />} />
@@ -73,6 +77,7 @@ const AppRoutes = () => {
                 <Route element={<ProtectedRoute allowedRoles={['faculty', 'admin']} />}>
                     <Route path="/faculty" element={<FacultyDashboard />}>
                         <Route path="schedule" element={<FacultySchedule />} />
+                        <Route path="students" element={<FacultyStudents />} />
                     </Route>
                 </Route>
 
@@ -83,9 +88,13 @@ const AppRoutes = () => {
                     </Route>
                 </Route>
                 
-                {/* Multi-role access (Admin & Faculty) */}
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty']} />}>
                     <Route path="/hostel" element={<HostelDashboard />} />
+                </Route>
+
+                {/* Common Live Room Route */}
+                <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty', 'student']} />}>
+                    <Route path="/live-room" element={<VideoRoom />} />
                 </Route>
 
                 {/* Redirect root domain `/` */}

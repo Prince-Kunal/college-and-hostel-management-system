@@ -59,6 +59,29 @@ const FacultyDashboard = () => {
         navigate('/login', { replace: true });
     };
 
+    const handleStartClass = async (scheduleId) => {
+        try {
+            const res = await fetch('http://localhost:8000/api/v1/live/start', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ scheduleId, facultyId: user.activeId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem("livekit", JSON.stringify({
+                    roomName: data.roomName,
+                    token: data.token
+                }));
+                navigate('/live-room');
+            } else {
+                alert('Failed to start class: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to start class');
+        }
+    };
+
     const styles = {
         container: { padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' },
         header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc', paddingBottom: '1rem', marginBottom: '2rem', backgroundColor: '#fcf8e3', padding: '1rem', borderRadius: '8px' },
@@ -96,6 +119,12 @@ const FacultyDashboard = () => {
                         >
                             Schedule New Class
                         </button>
+                        <button 
+                            onClick={() => navigate('/faculty/students')} 
+                            style={{ ...styles.button, backgroundColor: location.pathname === '/faculty/students' ? '#0d6efd' : '#6c757d' }}
+                        >
+                            My Students
+                        </button>
                     </div>
                 </div>
 
@@ -113,6 +142,7 @@ const FacultyDashboard = () => {
                                             <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Time</th>
                                             <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Batch</th>
                                             <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Subject</th>
+                                            <th style={{ textAlign: 'center', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Action</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -122,6 +152,11 @@ const FacultyDashboard = () => {
                                                 <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{s.startTime} - {s.endTime}</td>
                                                 <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#0d6efd', fontWeight: 'bold' }}>{batchMap[s.batchId] || s.batchId}</td>
                                                 <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#198754' }}>{subjectMap[s.subjectId] || s.subjectId}</td>
+                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', textAlign: 'center' }}>
+                                                    <button onClick={() => handleStartClass(s.id)} style={{ ...styles.button, backgroundColor: '#28a745' }}>
+                                                        Start Class
+                                                    </button>
+                                                </td>
                                             </tr>
                                         ))}
                                     </tbody>

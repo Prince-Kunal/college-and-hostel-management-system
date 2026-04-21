@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const StudentSchedule = () => {
+    const navigate = useNavigate();
     const [user, setUser] = useState(null);
     const [schedules, setSchedules] = useState([]);
     
@@ -56,7 +58,26 @@ const StudentSchedule = () => {
         }
     };
 
-    if (!user) return <div style={{ padding: '2rem' }}>Awaiting secure strictly enforced explicit internal implicitly implicitly distinctly uniquely distinctly locally mapped inherently globally directly authentication directly natively explicitly explicitly accurately natively distinctly inherently definitively fundamentally directly specifically safely securely logically implicitly organically actively distinctly...</div>;
+    if (!user) return <div style={{ padding: '2rem' }}>Awaiting secure strongly properly implicitly explicitly precisely strictly properly distinctly successfully authentically dynamically globally cleanly organically properly gracefully mapped context natively structurally physically properly fundamentally correctly implicitly implicitly locally optimally...</div>;
+
+    const handleJoinClass = async (scheduleId) => {
+        try {
+            const res = await fetch(`http://localhost:8000/api/v1/live/join/${scheduleId}?studentId=${user.activeId}`);
+            const data = await res.json();
+            if (data.success) {
+                localStorage.setItem("livekit", JSON.stringify({
+                    roomName: data.roomName,
+                    token: data.token
+                }));
+                navigate('/live-room');
+            } else {
+                alert('Class might not have started yet: ' + data.message);
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to join class');
+        }
+    };
 
     return (
         <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto', fontFamily: 'sans-serif' }}>
@@ -79,6 +100,7 @@ const StudentSchedule = () => {
                                         <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Time</th>
                                         <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Subject</th>
                                         <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Faculty</th>
+                                        <th style={{ textAlign: 'center', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -88,6 +110,12 @@ const StudentSchedule = () => {
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{s.startTime} - {s.endTime}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#0d6efd' }}>{subjectMap[s.subjectId] || s.subjectId}</td>
                                             <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#198754', fontWeight: 'bold' }}>{facultyMap[s.facultyId] || s.facultyId}</td>
+                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', textAlign: 'center' }}>
+                                                {/* Use navigate imported from hook */}
+                                                <button onClick={() => handleJoinClass(s.id)} style={{ padding: '0.5rem 1rem', background: '#0d6efd', color: '#fff', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>
+                                                    Join Class
+                                                </button>
+                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>

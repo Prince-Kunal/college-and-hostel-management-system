@@ -84,7 +84,7 @@ const SignupPage = () => {
                 />
             </div>
 
-            <div style={styles.wrapper}>
+            <div sztyle={styles.wrapper}>
                 <BorderGlow 
                     backgroundColor="rgba(30, 41, 59, 0.95)" 
                     borderRadius={12} 
