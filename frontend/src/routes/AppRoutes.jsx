@@ -1,7 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 
 // Layout
-import Layout from '../components/layout/Layout';
+import PremiumLayout from '../components/layout/PremiumLayout';
 
 // Auth Components
 import ProtectedRoute from '../components/ProtectedRoute';
@@ -31,6 +31,7 @@ import AdminBatchTable from '../pages/admin/AdminBatchTable';
 import FacultySchedule from '../pages/faculty/FacultySchedule';
 import FacultyStudents from '../pages/faculty/FacultyStudents';
 import StudentSchedule from '../pages/student/StudentSchedule';
+import StudentOnboarding from '../pages/student/StudentOnboarding';
 import VideoRoom from '../pages/live/VideoRoom';
 
 const AppRoutes = () => {
@@ -56,8 +57,16 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
-            {/* Layout Wrapper */}
-            <Route element={<Layout />}>
+            {/* Layout Wrapper unifying All Roles under Premium Global System cleanly */}
+            <Route element={<PremiumLayout />}>
+                
+                {/* Student Only */}
+                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
+                    <Route path="/student/onboarding" element={<StudentOnboarding />} />
+                    <Route path="/student" element={<StudentDashboard />}>
+                        <Route path="schedule" element={<StudentSchedule />} />
+                    </Route>
+                </Route>
                 
                 {/* Admin Only */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
@@ -81,12 +90,6 @@ const AppRoutes = () => {
                     </Route>
                 </Route>
 
-                {/* Student Only */}
-                <Route element={<ProtectedRoute allowedRoles={['student']} />}>
-                    <Route path="/student" element={<StudentDashboard />}>
-                        <Route path="schedule" element={<StudentSchedule />} />
-                    </Route>
-                </Route>
                 
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty']} />}>
                     <Route path="/hostel" element={<HostelDashboard />} />

@@ -3,7 +3,6 @@ import {
   createUserWithEmailAndPassword, 
   signInWithEmailAndPassword
 } from 'firebase/auth';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
 
 export const signup = async (req, res) => {
   try {
@@ -22,7 +21,7 @@ export const signup = async (req, res) => {
     const user = userCredential.user;
 
     // Store user securely entirely within Firestore
-    await setDoc(doc(db, 'users', user.uid), {
+    await db.collection('users').doc(user.uid).set({
       uid: user.uid,
       email: user.email,
       role: assignedRole,
@@ -62,20 +61,30 @@ export const login = async (req, res) => {
     const user = userCredential.user;
 
     // Fetch user document from Firestore to retrieve authoritative role
-    const userDocRef = doc(db, 'users', user.uid);
-    const userDocSnap = await getDoc(userDocRef);
+    let role = 'student'; // Fallback role
+    try {
+      const userDocSnap = await db.collection('users').doc(user.uid).get();
 
-    let role = 'student'; // Fallback role 
-    if (userDocSnap.exists()) {
-      role = userDocSnap.data().role || 'student';
-      if (role === 'deleted') {
-        return res.status(403).json({
-          success: false,
-          message: 'Account has been disabled.'
+      if (userDocSnap.exists) {
+        role = userDocSnap.data().role || 'student';
+        if (role === 'deleted') {
+          return res.status(403).json({
+            success: false,
+            message: 'Account has been disabled.'
+          });
+        }
+      } else {
+        console.warn(`Notice: No Firestore document found for authenticated user: ${user.uid}`);
+        // Create the missing document so future operations work
+        await db.collection('users').doc(user.uid).set({
+          uid: user.uid,
+          email: user.email,
+          role: 'student',
+          createdAt: new Date().toISOString()
         });
       }
-    } else {
-      console.warn(`Notice: No Firestore document found for authenticated user: ${user.uid}`);
+    } catch (e) {
+      console.warn(`Firestore fetch error for ${user.uid}:`, e.message);
     }
 
     return res.status(200).json({

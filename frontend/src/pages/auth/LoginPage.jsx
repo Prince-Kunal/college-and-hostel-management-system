@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import LightRays from '../../components/ui/LightRays';
 import BorderGlow from '../../components/ui/BorderGlow';
+import { api } from '../../services/api';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -38,9 +39,22 @@ const LoginPage = () => {
             localStorage.setItem('user', JSON.stringify(data.data));
 
             const role = data.data.role;
-            if (role === 'admin') navigate('/admin');
-            else if (role === 'faculty') navigate('/faculty');
-            else navigate('/student');
+            if (role === 'admin') {
+                navigate('/admin');
+            } else if (role === 'faculty') {
+                navigate('/faculty');
+            } else {
+                try {
+                    const profile = await api.getStudentProfile(data.data.uid);
+                    if (!profile.name || !profile.dob || !profile.phone || !profile.onboarded) {
+                        navigate('/student/onboarding');
+                    } else {
+                        navigate('/student');
+                    }
+                } catch (err) {
+                    navigate('/student/onboarding');
+                }
+            }
         } catch (err) {
             // Clean up error message
             const errMsg = err.message || '';

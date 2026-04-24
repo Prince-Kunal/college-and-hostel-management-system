@@ -1,175 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, Outlet, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 const FacultyDashboard = () => {
     const navigate = useNavigate();
-    const location = useLocation();
     const [user, setUser] = useState(null);
-
-    const [schedules, setSchedules] = useState([]);
-    const [batchMap, setBatchMap] = useState({});
-    const [subjectMap, setSubjectMap] = useState({});
-    const [loading, setLoading] = useState(false);
+    const [stats, setStats] = useState({
+        totalClasses: 0,
+        totalStudents: 0,
+        upcomingAssignments: 0
+    });
 
     useEffect(() => {
         const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            const parsed = JSON.parse(storedUser);
-            setUser({ ...parsed, activeId: parsed.id || parsed.uid });
-        }
+        if (storedUser) setUser(JSON.parse(storedUser));
+        
+        // Mock data fetch for faculty stats
+        setTimeout(() => {
+            setStats({
+                totalClasses: 4,
+                totalStudents: 120,
+                upcomingAssignments: 2
+            });
+        }, 800);
     }, []);
-
-    useEffect(() => {
-        if (user?.activeId && location.pathname === '/faculty') {
-            fetchMySchedules();
-        }
-    }, [user, location.pathname]);
-
-    const fetchMySchedules = async () => {
-        setLoading(true);
-        try {
-            const [resSched, resBatches, resSubjects] = await Promise.all([
-                fetch(`http://localhost:8000/api/v1/schedules/faculty/${user.activeId}`),
-                fetch('http://localhost:8000/api/v1/batches'),
-                fetch('http://localhost:8000/api/v1/subjects')
-            ]);
-            
-            const dataSched = await resSched.json();
-            const dataBatches = await resBatches.json();
-            const dataSubjects = await resSubjects.json();
-
-            const bMap = {};
-            if (dataBatches.success) dataBatches.data.forEach(b => bMap[b.id] = b.name);
-            setBatchMap(bMap);
-
-            const sMap = {};
-            if (dataSubjects.success) dataSubjects.data.forEach(s => sMap[s.id] = s.name);
-            setSubjectMap(sMap);
-
-            if (dataSched.success) setSchedules(dataSched.data);
-        } catch (err) {
-            console.error(err);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     const handleLogout = () => {
         localStorage.removeItem('user');
         navigate('/login', { replace: true });
     };
 
-    const handleStartClass = async (scheduleId) => {
-        try {
-            const res = await fetch('http://localhost:8000/api/v1/live/start', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ scheduleId, facultyId: user.activeId })
-            });
-            const data = await res.json();
-            if (data.success) {
-                localStorage.setItem("livekit", JSON.stringify({
-                    roomName: data.roomName,
-                    token: data.token
-                }));
-                navigate('/live-room');
-            } else {
-                alert('Failed to start class: ' + data.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to start class');
-        }
-    };
-
-    const styles = {
-        container: { padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' },
-        header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc', paddingBottom: '1rem', marginBottom: '2rem', backgroundColor: '#fcf8e3', padding: '1rem', borderRadius: '8px' },
-        button: { padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
-        card: { padding: '1.5rem', backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef' },
-        badge: { backgroundColor: '#fd7e14', color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', marginLeft: '1rem', textTransform: 'uppercase' }
-    };
-
     return (
-        <div style={styles.container}>
-            <header style={styles.header}>
-                <div>
-                    <h1 style={{ margin: 0 }}>Faculty Portal</h1>
-                </div>
-                <button onClick={handleLogout} style={styles.button}>Logout</button>
-            </header>
-            
-            <main>
-                <div style={{ ...styles.card, marginBottom: '2rem' }}>
-                    <h2>Classes & Assignments</h2>
-                    {user && (
-                        <p>Logged in as: <strong>{user.email}</strong> <span style={styles.badge}>{user.role}</span></p>
-                    )}
+        <React.Fragment>
+            <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+                <header className="sd-header">
+                    <div className="sd-header-left">
+                        <p>Faculty Portal</p>
+                        <h1>Welcome, {user?.name || user?.email || "Professor"}! 📚</h1>
+                        <span className="sub">Department of Computer Science</span>
+                    </div>
                     
-                    <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem' }}>
-                        <button 
-                            onClick={() => navigate('/faculty')} 
-                            style={{ ...styles.button, backgroundColor: location.pathname === '/faculty' ? '#0d6efd' : '#6c757d' }}
-                        >
-                            My Scheduled Classes
-                        </button>
-                        <button 
-                            onClick={() => navigate('/faculty/schedule')} 
-                            style={{ ...styles.button, backgroundColor: location.pathname === '/faculty/schedule' ? '#0d6efd' : '#6c757d' }}
-                        >
-                            Schedule New Class
-                        </button>
-                        <button 
-                            onClick={() => navigate('/faculty/students')} 
-                            style={{ ...styles.button, backgroundColor: location.pathname === '/faculty/students' ? '#0d6efd' : '#6c757d' }}
-                        >
-                            My Students
-                        </button>
+                    <div className="sd-header-right">
+                        <button onClick={handleLogout} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'var(--sd-card-bg)', color: 'var(--sd-danger)', border: '1px solid var(--sd-border)' }}>Logout</button>
                     </div>
-                </div>
+                </header>
 
-                {location.pathname === '/faculty' && (
-                    <div style={styles.card}>
-                        <h2 style={{ marginTop: 0 }}>Active Upcoming Slots</h2>
-                        {loading ? <p style={{ color: '#666' }}>Fetching explicitly logged schedules inherently tightly formally precisely cleanly successfully globally safely natively...</p> : (
-                            schedules.length === 0 ? (
-                                <p style={{ fontStyle: 'italic', color: '#666' }}>You currently distinctly lack any uniquely dynamically tightly firmly organically mapped classes sequentially safely organically actively precisely fundamentally effectively smoothly mapped inherently securely logically successfully.</p>
-                            ) : (
-                                <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', backgroundColor: '#fff', borderRadius: '4px', overflow: 'hidden' }}>
-                                    <thead>
-                                        <tr>
-                                            <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Day</th>
-                                            <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Time</th>
-                                            <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Batch</th>
-                                            <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Subject</th>
-                                            <th style={{ textAlign: 'center', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Action</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {schedules.map(s => (
-                                            <tr key={s.id}>
-                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', fontWeight: 'bold' }}>{s.day}</td>
-                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{s.startTime} - {s.endTime}</td>
-                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#0d6efd', fontWeight: 'bold' }}>{batchMap[s.batchId] || s.batchId}</td>
-                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#198754' }}>{subjectMap[s.subjectId] || s.subjectId}</td>
-                                                <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', textAlign: 'center' }}>
-                                                    <button onClick={() => handleStartClass(s.id)} style={{ ...styles.button, backgroundColor: '#28a745' }}>
-                                                        Start Class
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                            )
-                        )}
+                <main className="sd-grid">
+                    <section className="sd-card">
+                        <div className="sd-card-header">
+                            <div className="sd-card-header-left">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <h2>Today's Schedule</h2>
+                            </div>
+                            <div className="sd-card-header-right">
+                                <a href="#" onClick={(e) => { e.preventDefault(); navigate('/faculty/schedule'); }}>View Calendar</a>
+                            </div>
+                        </div>
+
+                        <div className="sd-class-list">
+                            <div className="sd-class-card next">
+                                <div className="sd-class-icon-box blue">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
+                                </div>
+                                <div className="sd-class-details">
+                                    <h3>CS-301 Data Structures</h3>
+                                    <div className="sd-class-meta">
+                                        <span>Batch 2026-A • Lab 3</span>
+                                    </div>
+                                </div>
+                                <div className="sd-class-time-right">
+                                    <strong className="blue">10:00 AM - 11:30 AM</strong>
+                                    <span>
+                                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                        Lab 3
+                                    </span>
+                                </div>
+                                <div className="sd-class-badge">In 15 mins</div>
+                            </div>
+                            <div className="sd-class-card">
+                                <div className="sd-class-icon-box purple">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 7V4H6v4L11 12l-5 4v4h12v-3" /></svg>
+                                </div>
+                                <div className="sd-class-details">
+                                    <h3>MA-201 Discrete Math</h3>
+                                    <div className="sd-class-meta">
+                                        <span>Batch 2026-B • Room 402</span>
+                                    </div>
+                                </div>
+                                <div className="sd-class-time-right">
+                                    <strong className="purple">01:00 PM - 02:30 PM</strong>
+                                    <span>Room 402</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button className="sd-btn-primary" style={{ marginTop: '24px' }}>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                            Start Live Classroom
+                        </button>
+                    </section>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                        <div className="sd-card">
+                            <div className="sd-card-header" style={{ marginBottom: 16 }}>
+                                <div className="sd-card-header-left">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    <h2>Actions</h2>
+                                </div>
+                            </div>
+                            
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '12px' }}>
+                                <button className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>
+                                    Publish Assignment
+                                </button>
+                                <button className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>
+                                    Upload Grades
+                                </button>
+                                <button onClick={() => navigate('/faculty/students')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>
+                                    View Student Directory
+                                </button>
+                            </div>
+                        </div>
+
+                        <div className="sd-card">
+                            <div className="sd-card-header">
+                                <div className="sd-card-header-left">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-warning)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                                    <h2>Pending Approvals</h2>
+                                </div>
+                            </div>
+                            
+                            <div className="sd-notification-list">
+                                <div className="sd-notification-item">
+                                    <div className="sd-notif-icon yellow">
+                                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                                    </div>
+                                    <div className="sd-notif-content">
+                                        <div className="sd-notif-header">
+                                            <h4>Review Project Proposals</h4>
+                                            <span>Batch 2026</span>
+                                        </div>
+                                        <p>12 submissions waiting for review.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                )}
-
-                {/* Intelligently nested Outlet natively resolving dynamic explicit paths distinctly cleanly functionally explicitly dynamically securely firmly perfectly explicitly seamlessly locally securely dynamically securely perfectly optimally actively natively effectively properly firmly cleanly uniquely gracefully tightly effectively properly dynamically elegantly structurally precisely cleanly accurately physically intelligently securely organically properly dynamically efficiently structurally optimally formally gracefully thoroughly correctly fundamentally cleanly deeply smoothly cleanly smoothly completely elegantly seamlessly strongly cleanly structurally... */}
-                <Outlet />
-            </main>
-        </div>
+                </main>
+            </div>
+        </React.Fragment>
     );
 };
 

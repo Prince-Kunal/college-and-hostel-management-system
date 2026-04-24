@@ -1,5 +1,4 @@
 import { AccessToken } from 'livekit-server-sdk';
-import { collection, addDoc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
 const createToken = async (roomName, identity, role) => {
@@ -8,8 +7,6 @@ const createToken = async (roomName, identity, role) => {
     }
     const apiKey = process.env.LIVEKIT_API_KEY;
     const apiSecret = process.env.LIVEKIT_API_SECRET;
-    
-    console.log("LIVEKIT KEY USED:", apiKey);
     
     const at = new AccessToken(apiKey, apiSecret, {
         identity: identity,
@@ -22,7 +19,6 @@ const createToken = async (roomName, identity, role) => {
         canSubscribe: true,
     });
     
-    console.log("Room created/joined:", roomName);
     const token = await at.toJwt();
     return typeof token === "string" ? token : String(token);
 };
@@ -34,17 +30,14 @@ export const startLiveClass = async (req, res) => {
             return res.status(400).json({ success: false, message: 'scheduleId and facultyId are required' });
         }
         
-        const q = query(
-            collection(db, 'liveClasses'), 
-            where('scheduleId', '==', scheduleId),
-            where('isActive', '==', true)
-        );
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection('liveClasses')
+            .where('scheduleId', '==', scheduleId)
+            .where('isActive', '==', true)
+            .get();
         
         if (!querySnapshot.empty) {
             const activeClassDoc = querySnapshot.docs[0];
             const { roomName } = activeClassDoc.data();
-            console.log("REUSING EXISTING ROOM NAME:", roomName);
             const token = await createToken(roomName, facultyId, 'host');
             return res.status(200).json({ success: true, roomName, token });
         }
@@ -58,8 +51,7 @@ export const startLiveClass = async (req, res) => {
             isActive: true,
             createdAt: new Date().toISOString()
         };
-        console.log("CREATING NEW ROOM NAME:", roomName);
-        await addDoc(collection(db, 'liveClasses'), liveClassData);
+        await db.collection('liveClasses').add(liveClassData);
         
         const token = await createToken(roomName, facultyId, 'host');
         
@@ -75,12 +67,10 @@ export const joinLiveClass = async (req, res) => {
         const { scheduleId } = req.params;
         const studentId = req.query.studentId || `student-${Date.now()}`;
         
-        const q = query(
-            collection(db, 'liveClasses'), 
-            where('scheduleId', '==', scheduleId),
-            where('isActive', '==', true)
-        );
-        const querySnapshot = await getDocs(q);
+        const querySnapshot = await db.collection('liveClasses')
+            .where('scheduleId', '==', scheduleId)
+            .where('isActive', '==', true)
+            .get();
         
         if (querySnapshot.empty) {
             return res.status(404).json({ success: false, message: 'No active live class found for this schedule' });
@@ -88,7 +78,6 @@ export const joinLiveClass = async (req, res) => {
         
         const activeClassDoc = querySnapshot.docs[0];
         const { roomName } = activeClassDoc.data();
-        console.log("ROOM NAME:", roomName);
         
         const token = await createToken(roomName, studentId, 'participant');
         

@@ -7,6 +7,7 @@ import facultyAssignmentRoutes from './facultyAssignment.routes.js';
 import facultyRoutes from './faculty.routes.js';
 import scheduleRoutes from './schedule.routes.js';
 import liveRoutes from './live.routes.js';
+import studentRoutes from './student.routes.js';
 
 const router = Router();
 
@@ -19,5 +20,6 @@ router.use('/faculty-assignments', facultyAssignmentRoutes);
 router.use('/faculty', facultyRoutes);
 router.use('/schedules', scheduleRoutes);
 router.use('/live', liveRoutes);
+router.use('/student', studentRoutes);
 
 export default router;

@@ -1,10 +1,8 @@
 import { db } from '../firebase.js';
-import { collection, getDocs, doc, updateDoc, query, where } from 'firebase/firestore';
 
 export const getUsers = async (req, res) => {
   try {
-    const usersRef = collection(db, 'users');
-    const snapshot = await getDocs(usersRef);
+    const snapshot = await db.collection('users').get();
     
     const users = [];
     snapshot.forEach(doc => {
@@ -39,8 +37,7 @@ export const updateUserRole = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Role is required' });
     }
 
-    const userRef = doc(db, 'users', id);
-    await updateDoc(userRef, { role });
+    await db.collection('users').doc(id).update({ role });
 
     return res.status(200).json({
       success: true,
@@ -57,8 +54,7 @@ export const updateUserRole = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const userRef = doc(db, 'users', id);
-    await updateDoc(userRef, { role: 'deleted' });
+    await db.collection('users').doc(id).update({ role: 'deleted' });
 
     return res.status(200).json({
       success: true,
@@ -75,16 +71,16 @@ export const deleteUser = async (req, res) => {
 export const getBatchesDetails = async (req, res) => {
   try {
     // 1. Fetch all batches
-    const batchesSnapshot = await getDocs(collection(db, 'batches'));
+    const batchesSnapshot = await db.collection('batches').get();
     const batches = [];
     batchesSnapshot.forEach(doc => {
       batches.push({ id: doc.id, ...doc.data() });
     });
 
-    // 2. Fetch all required entities to avoid N+1 queries and index issues
-    const usersSnapshot = await getDocs(collection(db, 'users'));
-    const assignmentsSnapshot = await getDocs(collection(db, 'facultyAssignments'));
-    const subjectsSnapshot = await getDocs(collection(db, 'subjects'));
+    // 2. Fetch all required entities to avoid N+1 queries
+    const usersSnapshot = await db.collection('users').get();
+    const assignmentsSnapshot = await db.collection('facultyAssignments').get();
+    const subjectsSnapshot = await db.collection('subjects').get();
 
     const allUsers = [];
     usersSnapshot.forEach(doc => allUsers.push({ id: doc.id, ...doc.data() }));
@@ -110,7 +106,7 @@ export const getBatchesDetails = async (req, res) => {
         const faculty = allUsers.find(u => u.id === assignment.facultyId);
         return {
           subjectName: subjectsMap[assignment.subjectId] || 'Unknown Subject',
-          facultyName: faculty ? faculty.email : 'Unknown Faculty' // Using email as name isn't there
+          facultyName: faculty ? faculty.email : 'Unknown Faculty'
         };
       });
 

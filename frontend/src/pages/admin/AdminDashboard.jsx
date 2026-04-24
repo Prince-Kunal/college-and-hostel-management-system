@@ -23,9 +23,7 @@ const AdminDashboard = () => {
         try {
             const res = await fetch('http://localhost:8000/api/v1/admin/users');
             const data = await res.json();
-            
             if (!res.ok) throw new Error(data.message || 'Failed to fetch users');
-            
             setUsersList(data.data);
         } catch (err) {
             setError(err.message);
@@ -42,10 +40,7 @@ const AdminDashboard = () => {
                 body: JSON.stringify({ role: newRole })
             });
             const data = await res.json();
-            
             if (!res.ok) throw new Error(data.message || 'Failed to update user role');
-            
-            // Update UI state
             setUsersList(usersList.map(u => u.id === userId ? { ...u, role: newRole } : u));
         } catch (err) {
             alert(err.message);
@@ -54,15 +49,12 @@ const AdminDashboard = () => {
 
     const handleDeleteUser = async (userId) => {
         if (!window.confirm("Are you sure you want to disable this user?")) return;
-        
         try {
             const res = await fetch(`http://localhost:8000/api/v1/admin/users/${userId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
-            
             if (!res.ok) throw new Error(data.message || 'Failed to disable user');
-            
             fetchUsers();
         } catch (err) {
             alert(err.message);
@@ -85,10 +77,7 @@ const AdminDashboard = () => {
                 body: JSON.stringify(newUserForm)
             });
             const data = await res.json();
-            
             if (!res.ok) throw new Error(data.message || 'Failed to create user');
-            
-            // Clear form and refresh list
             setNewUserForm({ email: '', password: '', role: 'student' });
             fetchUsers();
         } catch (err) {
@@ -98,161 +87,148 @@ const AdminDashboard = () => {
         }
     };
 
-    const styles = {
-        container: { padding: '2rem', maxWidth: '800px', margin: '0 auto', fontFamily: 'sans-serif' },
-        header: { display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderBottom: '1px solid #ccc', paddingBottom: '1rem', marginBottom: '2rem', backgroundColor: '#e3f2fd', padding: '1rem', borderRadius: '8px' },
-        button: { padding: '0.5rem 1rem', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' },
-        card: { padding: '1.5rem', backgroundColor: '#f8f9fa', borderRadius: '8px', border: '1px solid #e9ecef', marginBottom: '1.5rem' },
-        badge: { backgroundColor: '#0d6efd', color: 'white', padding: '0.25rem 0.5rem', borderRadius: '4px', fontSize: '0.8rem', marginLeft: '1rem', textTransform: 'uppercase' },
-        table: { width: '100%', borderCollapse: 'collapse', marginTop: '1rem' },
-        th: { textAlign: 'left', padding: '0.75rem', borderBottom: '2px solid #dee2e6' },
-        td: { padding: '0.75rem', borderBottom: '1px solid #dee2e6' },
-        emptyState: { textAlign: 'center', color: '#6c757d', padding: '2rem' }
-    };
-
     return (
-        <div style={styles.container}>
-            <header style={styles.header}>
-                <div>
-                    <h1 style={{ margin: 0 }}>Admin Portal</h1>
-                </div>
-                <button onClick={handleLogout} style={styles.button}>Logout</button>
-            </header>
-            
-            <main>
-                <div style={styles.card}>
-                    <h2>System Overview</h2>
-                    {user && (
-                        <p>Logged in as: <strong>{user.email}</strong> <span style={styles.badge}>{user.role}</span></p>
-                    )}
-                </div>
-
-                <div style={styles.card}>
-                    <h2>Quick Navigation</h2>
-                    <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
-                        <button onClick={() => navigate('/batches')} style={{ ...styles.button, backgroundColor: '#0d6efd' }}>
-                            Manage External Batches
-                        </button>
-                        <button onClick={() => navigate('/batches-details')} style={{ ...styles.button, backgroundColor: '#ffc107', color: '#000' }}>
-                            View Batch Details Overview
-                        </button>
-                        <button onClick={() => navigate('/batches/create')} style={{ ...styles.button, backgroundColor: '#198754' }}>
-                            Create New Batch
-                        </button>
-                        <button onClick={() => navigate('/subjects')} style={{ ...styles.button, backgroundColor: '#6f42c1' }}>
-                            Manage Subjects
-                        </button>
-                        <button onClick={() => navigate('/subjects/create')} style={{ ...styles.button, backgroundColor: '#fd7e14' }}>
-                            Create New Subject
-                        </button>
-                        <button onClick={() => navigate('/assignments')} style={{ ...styles.button, backgroundColor: '#0dcaf0', color: '#000' }}>
-                            View Faculty Matrix
-                        </button>
-                        <button onClick={() => navigate('/assignments/create')} style={{ ...styles.button, backgroundColor: '#20c997' }}>
-                            Allocate Map
-                        </button>
-                        <button onClick={() => navigate('/schedules')} style={{ ...styles.button, backgroundColor: '#343a40' }}>
-                            Manage Global Schedules
-                        </button>
-                        <button onClick={() => navigate('/schedules/create')} style={{ ...styles.button, backgroundColor: '#0d6efd' }}>
-                            Deploy Target Schedule block
-                        </button>
+        <React.Fragment>
+            <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+                <header className="sd-header">
+                    <div className="sd-header-left">
+                        <p>Administrator</p>
+                        <h1>Admin Portal ⚙️</h1>
+                        {user && <span className="sub">Logged in as: {user.email}</span>}
                     </div>
-                </div>
+                    <div className="sd-header-right">
+                        <button onClick={handleLogout} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'var(--sd-card-bg)', color: 'var(--sd-danger)', border: '1px solid var(--sd-border)' }}>Logout</button>
+                    </div>
+                </header>
+                
+                <main className="sd-grid">
+                    <section className="sd-card">
+                        <div className="sd-card-header">
+                            <div className="sd-card-header-left">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                                <h2>Quick Actions</h2>
+                            </div>
+                        </div>
 
-                <div style={styles.card}>
-                    <h2>Create New User</h2>
-                    {createError && <p style={{ color: 'red', marginBottom: '1rem' }}>{createError}</p>}
-                    <form onSubmit={handleCreateUser} style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
-                        <input
-                            type="email"
-                            placeholder="Email"
-                            required
-                            value={newUserForm.email}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
-                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
-                        />
-                        <input
-                            type="password"
-                            placeholder="Password"
-                            required
-                            value={newUserForm.password}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
-                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc', minWidth: '200px' }}
-                        />
-                        <select
-                            value={newUserForm.role}
-                            onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
-                            style={{ padding: '0.5rem', borderRadius: '4px', border: '1px solid #ccc' }}
-                        >
-                            <option value="student">Student</option>
-                            <option value="faculty">Faculty</option>
-                            <option value="admin">Admin</option>
-                        </select>
-                        <button type="submit" disabled={creatingUser} style={{ ...styles.button, backgroundColor: '#198754' }}>
-                            {creatingUser ? 'Creating...' : 'Create User'}
-                        </button>
-                    </form>
-                </div>
+                        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+                            <button onClick={() => navigate('/batches/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Create Batch</button>
+                            <button onClick={() => navigate('/subjects/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Create Subject</button>
+                            <button onClick={() => navigate('/assignments/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Allocate Faculty</button>
+                            <button onClick={() => navigate('/schedules/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Deploy Schedule</button>
+                        </div>
+                    </section>
 
-                <div style={styles.card}>
-                    <h2>User Management</h2>
-                    {loading && <p>Loading users...</p>}
-                    {error && <p style={{ color: 'red' }}>{error}</p>}
-                    
+                    <section className="sd-card">
+                        <div className="sd-card-header">
+                            <div className="sd-card-header-left">
+                                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="8.5" cy="7" r="4"></circle><line x1="20" y1="8" x2="20" y2="14"></line><line x1="23" y1="11" x2="17" y2="11"></line></svg>
+                                <h2>Add User manually</h2>
+                            </div>
+                        </div>
+                        {createError && <p style={{ color: 'var(--sd-danger)', marginBottom: '16px', fontSize: '14px', fontWeight: 'bold' }}>{createError}</p>}
+                        
+                        <form onSubmit={handleCreateUser} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                            <input
+                                type="email"
+                                placeholder="Email address"
+                                required
+                                value={newUserForm.email}
+                                onChange={(e) => setNewUserForm({ ...newUserForm, email: e.target.value })}
+                                style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--sd-border)', outline: 'none', background: '#f8fafc', width: '100%' }}
+                            />
+                            <div style={{ display: 'flex', gap: '16px' }}>
+                                <input
+                                    type="password"
+                                    placeholder="Password"
+                                    required
+                                    value={newUserForm.password}
+                                    onChange={(e) => setNewUserForm({ ...newUserForm, password: e.target.value })}
+                                    style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--sd-border)', outline: 'none', background: '#f8fafc', width: '100%' }}
+                                />
+                                <select
+                                    value={newUserForm.role}
+                                    onChange={(e) => setNewUserForm({ ...newUserForm, role: e.target.value })}
+                                    style={{ padding: '12px 16px', borderRadius: '12px', border: '1px solid var(--sd-border)', outline: 'none', background: '#f8fafc', flexShrink: 0 }}
+                                >
+                                    <option value="student">Student</option>
+                                    <option value="faculty">Faculty</option>
+                                    <option value="admin">Admin</option>
+                                </select>
+                            </div>
+                            <button type="submit" disabled={creatingUser} className="sd-btn-primary" style={{ marginTop: '8px' }}>
+                                {creatingUser ? 'Provisioning...' : 'Provision Account'}
+                            </button>
+                        </form>
+                    </section>
+                </main>
+
+                <div className="sd-card" style={{ marginTop: '32px' }}>
+                    <div className="sd-card-header">
+                        <div className="sd-card-header-left">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-primary)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <h2>User Access Control</h2>
+                        </div>
+                    </div>
+                    {loading && <p style={{ color: 'var(--sd-text-secondary)' }}>Syncing registry...</p>}
                     {!loading && !error && (
                         <>
                             {usersList.length === 0 ? (
-                                <p style={styles.emptyState}>No users found in the system.</p>
+                                <p style={{ color: 'var(--sd-text-secondary)', fontStyle: 'italic' }}>No active accounts found.</p>
                             ) : (
-                                <table style={styles.table}>
-                                    <thead>
-                                        <tr>
-                                            <th style={styles.th}>Email</th>
-                                            <th style={styles.th}>Role</th>
-                                            <th style={styles.th}>Actions</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {usersList.map(u => (
-                                            <tr key={u.id}>
-                                                <td style={styles.td}>{u.email}</td>
-                                                <td style={styles.td}>
-                                                    <select 
-                                                        value={u.role} 
-                                                        onChange={(e) => updateUserRole(u.id, e.target.value)}
-                                                        style={{
-                                                            padding: '0.25rem 0.5rem',
-                                                            borderRadius: '4px',
-                                                            border: '1px solid #ccc',
-                                                            backgroundColor: u.role === 'admin' ? '#f8d7da' : u.role === 'faculty' ? '#ffeeba' : '#d1e7dd',
-                                                            color: '#000',
-                                                            cursor: 'pointer'
-                                                        }}
-                                                    >
-                                                        <option value="student">student</option>
-                                                        <option value="faculty">faculty</option>
-                                                        <option value="admin">admin</option>
-                                                    </select>
-                                                </td>
-                                                <td style={styles.td}>
-                                                    <button 
-                                                        onClick={() => handleDeleteUser(u.id)}
-                                                        style={{...styles.button, backgroundColor: '#dc3545', padding: '0.25rem 0.5rem', fontSize: '0.8rem'}}
-                                                    >
-                                                        Disable
-                                                    </button>
-                                                </td>
+                                <div className="sd-table-wrapper">
+                                    <table className="sd-table">
+                                        <thead>
+                                            <tr>
+                                                <th>Email Address</th>
+                                                <th>System Role</th>
+                                                <th style={{ textAlign: 'right' }}>Actions</th>
                                             </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
+                                        </thead>
+                                        <tbody>
+                                            {usersList.map(u => (
+                                                <tr key={u.id}>
+                                                    <td>{u.email}</td>
+                                                    <td>
+                                                        <select 
+                                                            value={u.role} 
+                                                            onChange={(e) => updateUserRole(u.id, e.target.value)}
+                                                            style={{
+                                                                padding: '6px 16px',
+                                                                borderRadius: '20px',
+                                                                border: 'none',
+                                                                outline: 'none',
+                                                                backgroundColor: u.role === 'admin' ? '#fee2e2' : u.role === 'faculty' ? '#fef3c7' : '#e0e7ff',
+                                                                color: u.role === 'admin' ? '#ef4444' : u.role === 'faculty' ? '#d97706' : 'var(--sd-primary)',
+                                                                fontWeight: '700',
+                                                                fontSize: '12px',
+                                                                cursor: 'pointer',
+                                                                WebkitAppearance: 'none'
+                                                            }}
+                                                        >
+                                                            <option value="student">STUDENT</option>
+                                                            <option value="faculty">FACULTY</option>
+                                                            <option value="admin">ADMIN</option>
+                                                        </select>
+                                                    </td>
+                                                    <td style={{ textAlign: 'right' }}>
+                                                        <button 
+                                                            onClick={() => handleDeleteUser(u.id)}
+                                                            style={{ background: 'none', border: '1px solid var(--sd-border)', outline: 'none', color: 'var(--sd-danger)', fontSize: '13px', fontWeight: 'bold', padding: '6px 16px', borderRadius: '8px', cursor: 'pointer' }}
+                                                        >
+                                                            Revoke
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            ))}
+                                        </tbody>
+                                    </table>
+                                </div>
                             )}
                         </>
                     )}
                 </div>
-            </main>
-        </div>
+            </div>
+        </React.Fragment>
     );
 };
 

@@ -1,5 +1,4 @@
 import { db } from '../firebase.js';
-import { collection, addDoc, getDocs, doc, updateDoc } from 'firebase/firestore';
 
 export const createBatch = async (req, res) => {
   try {
@@ -13,7 +12,7 @@ export const createBatch = async (req, res) => {
       createdAt: new Date().toISOString()
     };
 
-    const docRef = await addDoc(collection(db, 'batches'), newBatch);
+    const docRef = await db.collection('batches').add(newBatch);
     
     return res.status(201).json({
       success: true,
@@ -27,8 +26,7 @@ export const createBatch = async (req, res) => {
 
 export const getBatches = async (req, res) => {
   try {
-    const batchesRef = collection(db, 'batches');
-    const snapshot = await getDocs(batchesRef);
+    const snapshot = await db.collection('batches').get();
     
     const batches = [];
     snapshot.forEach(doc => {
@@ -50,8 +48,7 @@ export const assignStudent = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Student ID is required' });
     }
 
-    const userRef = doc(db, 'users', studentId);
-    await updateDoc(userRef, { batchId });
+    await db.collection('users').doc(studentId).update({ batchId });
 
     return res.status(200).json({ 
       success: true, 

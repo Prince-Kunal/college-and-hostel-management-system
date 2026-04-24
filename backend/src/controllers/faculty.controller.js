@@ -1,14 +1,13 @@
 import { db } from '../firebase.js';
-import { collection, getDocs, query, where } from 'firebase/firestore';
 
 export const getMyStudents = async (req, res) => {
   try {
     const { facultyId } = req.params;
 
     // 1. Fetch facultyAssignments where facultyId matches
-    const assignmentsRef = collection(db, 'facultyAssignments');
-    const q = query(assignmentsRef, where('facultyId', '==', facultyId));
-    const assignmentsSnapshot = await getDocs(q);
+    const assignmentsSnapshot = await db.collection('facultyAssignments')
+      .where('facultyId', '==', facultyId)
+      .get();
 
     const batchIds = new Set();
     assignmentsSnapshot.forEach(doc => {
@@ -20,13 +19,13 @@ export const getMyStudents = async (req, res) => {
     }
 
     // 2. Fetch batches to map names and users to find students
-    const batchesSnapshot = await getDocs(collection(db, 'batches'));
+    const batchesSnapshot = await db.collection('batches').get();
     const batchesMap = {};
     batchesSnapshot.forEach(doc => {
       batchesMap[doc.id] = doc.data().name;
     });
 
-    const usersSnapshot = await getDocs(collection(db, 'users'));
+    const usersSnapshot = await db.collection('users').get();
     const allUsers = [];
     usersSnapshot.forEach(doc => allUsers.push({ id: doc.id, ...doc.data() }));
 

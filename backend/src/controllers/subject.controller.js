@@ -1,5 +1,4 @@
 import { db } from '../firebase.js';
-import { collection, addDoc, getDocs } from 'firebase/firestore';
 
 export const createSubject = async (req, res) => {
   try {
@@ -11,7 +10,7 @@ export const createSubject = async (req, res) => {
       createdAt: new Date().toISOString()
     };
 
-    const docRef = await addDoc(collection(db, 'subjects'), newSubject);
+    const docRef = await db.collection('subjects').add(newSubject);
     
     return res.status(201).json({
       success: true,
@@ -25,8 +24,7 @@ export const createSubject = async (req, res) => {
 
 export const getSubjects = async (req, res) => {
   try {
-    const subjectsRef = collection(db, 'subjects');
-    const snapshot = await getDocs(subjectsRef);
+    const snapshot = await db.collection('subjects').get();
     
     const subjects = [];
     snapshot.forEach(doc => {
