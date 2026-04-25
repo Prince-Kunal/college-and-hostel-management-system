@@ -77,56 +77,17 @@ a {
   padding: 40px 24px 120px 24px;
 }
 
-/* Bottom Teleportation Navbar */
-.sd-bottom-navbar {
-  position: fixed;
-  bottom: 24px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: var(--sd-card-bg);
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
-  display: flex;
-  justify-content: center;
-  z-index: 1000;
-  border-radius: 99px; /* Pill shape */
-  padding: 0 20px;
+/* Animations */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-.sd-nav-items {
-  display: flex;
-  justify-content: space-around;
-  min-width: 380px;
-  padding: 12px 8px;
-  gap: 16px;
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-.sd-nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  background: none;
-  border: none;
-  cursor: pointer;
-  color: var(--sd-text-muted);
-  transition: all 0.2s ease;
-  padding: 10px 20px;
-  border-radius: 20px; /* Soft rounding for active state */
-}
-
-.sd-nav-item:hover {
-  color: var(--sd-primary);
-}
-
-.sd-nav-item.active {
-  color: var(--sd-primary);
-  background: #f0f0ff; /* Light purple wrap */
-}
-
-.sd-nav-label {
-  font-size: 12px;
-  font-weight: 600;
-}
 
 /* Generic SD Container components globally shared */
 .sd-header {

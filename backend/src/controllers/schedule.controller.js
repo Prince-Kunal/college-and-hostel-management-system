@@ -2,9 +2,9 @@ import { db } from '../firebase.js';
 
 export const createSchedule = async (req, res) => {
   try {
-    const { batchId, subjectId, facultyId, day, startTime, endTime } = req.body;
+    const { batchId, subjectId, facultyId, day, date, startTime, endTime } = req.body;
 
-    if (!batchId || !subjectId || !facultyId || !day || !startTime || !endTime) {
+    if (!batchId || !subjectId || !facultyId || !day || !date || !startTime || !endTime) {
       return res.status(400).json({ success: false, message: 'Missing required schedule parameters' });
     }
 
@@ -31,6 +31,7 @@ export const createSchedule = async (req, res) => {
       subjectId,
       facultyId,
       day,
+      date,
       startTime,
       endTime,
       createdAt: new Date().toISOString()

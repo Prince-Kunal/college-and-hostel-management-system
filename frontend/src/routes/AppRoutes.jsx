@@ -26,16 +26,20 @@ import CreateAssignment from '../pages/admin/CreateAssignment';
 import ScheduleList from '../pages/admin/ScheduleList';
 import CreateSchedule from '../pages/admin/CreateSchedule';
 import AdminBatchTable from '../pages/admin/AdminBatchTable';
+import AdminEvents from '../pages/admin/AdminEvents';
 
-// Sub Dashboards properly mapping inherently natively organically strongly implicitly inherently effectively exactly cleanly cleanly functionally structurally locally smartly perfectly explicitly naturally tightly precisely explicitly elegantly implicitly actively correctly globally correctly securely clearly formally purely compactly safely deeply perfectly optimally uniquely smartly securely cleanly gracefully logically strictly naturally natively cleanly...
+// Sub pages
 import FacultySchedule from '../pages/faculty/FacultySchedule';
 import FacultyStudents from '../pages/faculty/FacultyStudents';
+import FacultyClasses from '../pages/faculty/FacultyClasses';
+import FacultyCreateSchedule from '../pages/faculty/FacultyCreateSchedule';
 import StudentSchedule from '../pages/student/StudentSchedule';
 import StudentOnboarding from '../pages/student/StudentOnboarding';
+import StudentClasses from '../pages/student/StudentClasses';
 import VideoRoom from '../pages/live/VideoRoom';
+import EventsPage from '../pages/shared/EventsPage';
 
 const AppRoutes = () => {
-    // Dynamic root redirect based on role
     const getRootRedirect = () => {
         const userString = localStorage.getItem('user');
         if (userString) {
@@ -44,9 +48,7 @@ const AppRoutes = () => {
                 if (user.role === 'admin') return '/admin';
                 if (user.role === 'faculty') return '/faculty';
                 if (user.role === 'student') return '/student';
-            } catch (e) {
-                // Return to login on json parse error
-            }
+            } catch (e) {}
         }
         return '/login';
     };
@@ -57,7 +59,7 @@ const AppRoutes = () => {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
 
-            {/* Layout Wrapper unifying All Roles under Premium Global System cleanly */}
+            {/* Layout Wrapper */}
             <Route element={<PremiumLayout />}>
                 
                 {/* Student Only */}
@@ -66,11 +68,14 @@ const AppRoutes = () => {
                     <Route path="/student" element={<StudentDashboard />}>
                         <Route path="schedule" element={<StudentSchedule />} />
                     </Route>
+                    <Route path="/student/classes" element={<StudentClasses />} />
+                    <Route path="/student/events" element={<EventsPage />} />
                 </Route>
                 
                 {/* Admin Only */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<AdminDashboard />} />
+                    <Route path="/admin/events" element={<AdminEvents />} />
                     <Route path="/batches" element={<BatchList />} />
                     <Route path="/batches-details" element={<AdminBatchTable />} />
                     <Route path="/batches/create" element={<CreateBatch />} />
@@ -82,29 +87,32 @@ const AppRoutes = () => {
                     <Route path="/schedules/create" element={<CreateSchedule />} />
                 </Route>
 
-                {/* Faculty Only */}
+                {/* Faculty */}
                 <Route element={<ProtectedRoute allowedRoles={['faculty', 'admin']} />}>
                     <Route path="/faculty" element={<FacultyDashboard />}>
                         <Route path="schedule" element={<FacultySchedule />} />
                         <Route path="students" element={<FacultyStudents />} />
                     </Route>
+                    <Route path="/faculty/classes" element={<FacultyClasses />} />
+                    <Route path="/faculty/schedules/create" element={<FacultyCreateSchedule />} />
+                    <Route path="/faculty/events" element={<EventsPage />} />
                 </Route>
 
-                
+                {/* Shared */}
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty']} />}>
                     <Route path="/hostel" element={<HostelDashboard />} />
                 </Route>
 
-                {/* Common Live Room Route */}
+                {/* Live Room */}
                 <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty', 'student']} />}>
                     <Route path="/live-room" element={<VideoRoom />} />
                 </Route>
 
-                {/* Redirect root domain `/` */}
+                {/* Redirect root */}
                 <Route path="/" element={<Navigate to={getRootRedirect()} replace />} />
             </Route>
 
-            {/* Catch-all route */}
+            {/* Catch-all */}
             <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
     );

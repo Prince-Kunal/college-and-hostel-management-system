@@ -1,0 +1,154 @@
+/* ═══════════════════════════════════════════
+   MagicUI-style Dock Component
+   macOS-inspired dock with icon magnification
+   ═══════════════════════════════════════════ */
+
+.dock-container {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+}
+
+.dock {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.82);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 22px;
+  box-shadow:
+    0 8px 32px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(0, 0, 0, 0.04),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+/* Individual dock item */
+.dock-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: #64748b;
+  transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+  transform-origin: bottom center;
+  padding: 0;
+  outline: none;
+}
+
+.dock-item svg {
+  width: 24px;
+  height: 24px;
+  transition: all 0.25s cubic-bezier(0.32, 0.72, 0, 1);
+  flex-shrink: 0;
+}
+
+/* Hover magnification effect — applied via CSS sibling selectors */
+.dock:hover .dock-item {
+  transform: scale(0.88);
+  opacity: 0.7;
+}
+
+.dock:hover .dock-item:hover {
+  transform: scale(1.35) translateY(-8px);
+  opacity: 1;
+  color: #5c5cff;
+  background: rgba(92, 92, 255, 0.08);
+}
+
+/* Adjacent siblings get partial magnification */
+.dock:hover .dock-item:hover + .dock-item,
+.dock:hover .dock-item:has(+ .dock-item:hover) {
+  transform: scale(1.12) translateY(-3px);
+  opacity: 0.9;
+}
+
+/* Active state */
+.dock-item.active {
+  color: #5c5cff;
+  background: rgba(92, 92, 255, 0.1);
+}
+
+.dock-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #5c5cff;
+}
+
+/* Tooltip */
+.dock-tooltip {
+  position: absolute;
+  bottom: calc(100% + 12px);
+  left: 50%;
+  transform: translateX(-50%) scale(0.8);
+  padding: 5px 12px;
+  background: #0f172a;
+  color: white;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 8px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: all 0.2s cubic-bezier(0.32, 0.72, 0, 1);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.dock-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #0f172a;
+}
+
+.dock-item:hover .dock-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) scale(1);
+}
+
+/* Separator between groups */
+.dock-separator {
+  width: 1px;
+  height: 32px;
+  background: rgba(0, 0, 0, 0.08);
+  margin: 0 6px;
+  align-self: center;
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+  .dock {
+    padding: 8px 10px;
+    gap: 2px;
+  }
+  
+  .dock-item {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+  }
+  
+  .dock-item svg {
+    width: 20px;
+    height: 20px;
+  }
+}

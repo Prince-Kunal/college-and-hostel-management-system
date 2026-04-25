@@ -9,7 +9,8 @@ const CreateSchedule = () => {
     const [batchId, setBatchId] = useState('');
     const [subjectId, setSubjectId] = useState('');
     const [facultyId, setFacultyId] = useState('');
-    const [day, setDay] = useState('Monday');
+    const [date, setDate] = useState('');
+    const [day, setDay] = useState('');
     const [startTime, setStartTime] = useState('');
     const [endTime, setEndTime] = useState('');
 
@@ -62,6 +63,12 @@ const CreateSchedule = () => {
         setError(null);
         setSuccess(false);
 
+        if (!date) {
+            setError('Please select a valid date.');
+            setLoading(false);
+            return;
+        }
+
         if (startTime >= endTime) {
             setError('Time logic invalid: End time must strictly proceed start time explicitly.');
             setLoading(false);
@@ -69,7 +76,7 @@ const CreateSchedule = () => {
         }
 
         try {
-            const payload = { batchId, subjectId, day, startTime, endTime };
+            const payload = { batchId, subjectId, date, day, startTime, endTime };
             if (facultyId) payload.facultyId = facultyId;
 
             const res = await fetch('http://localhost:8000/api/v1/schedules', {
@@ -82,6 +89,8 @@ const CreateSchedule = () => {
             if (!res.ok) throw new Error(data.message || 'Error storing unique scheduling tuple');
 
             setSuccess(true);
+            setDate('');
+            setDay('');
             setStartTime('');
             setEndTime('');
         } catch (err) {
@@ -125,12 +134,28 @@ const CreateSchedule = () => {
                     </div>
 
                     <div>
-                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>Active Temporal Day</label>
-                        <select value={day} onChange={(e) => setDay(e.target.value)} required style={{ padding: '0.75rem', width: '100%', borderRadius: '4px', border: '1px solid #ccc' }}>
-                            {['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'].map(d => (
-                                <option key={d} value={d}>{d}</option>
-                            ))}
-                        </select>
+                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>Date</label>
+                        <input 
+                            type="date" 
+                            required 
+                            value={date} 
+                            onChange={(e) => {
+                                setDate(e.target.value);
+                                if (e.target.value) {
+                                    const d = new Date(e.target.value);
+                                    const dayName = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'][d.getDay()];
+                                    setDay(dayName);
+                                } else {
+                                    setDay('');
+                                }
+                            }} 
+                            style={{ padding: '0.75rem', width: '100%', borderRadius: '4px', border: '1px solid #ccc', boxSizing: 'border-box' }} 
+                        />
+                    </div>
+
+                    <div>
+                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>Auto-Calculated Day</label>
+                        <input type="text" value={day} readOnly placeholder="Select a date first" style={{ padding: '0.75rem', width: '100%', borderRadius: '4px', border: '1px solid #ccc', backgroundColor: '#f8f9fa', color: '#6c757d' }} />
                     </div>
 
                     <div style={{ display: 'flex', gap: '1rem' }}>
@@ -146,8 +171,8 @@ const CreateSchedule = () => {
 
                     <button 
                         type="submit" 
-                        disabled={loading || !batchId || !subjectId || !day || !startTime || !endTime}
-                        style={{ padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: (loading || !batchId || !subjectId || !day || !startTime || !endTime) ? 'not-allowed' : 'pointer', fontWeight: 'bold', marginTop: '0.5rem' }}
+                        disabled={loading || !batchId || !subjectId || !date || !day || !startTime || !endTime}
+                        style={{ padding: '0.75rem', backgroundColor: '#007bff', color: 'white', border: 'none', borderRadius: '4px', cursor: (loading || !batchId || !subjectId || !date || !day || !startTime || !endTime) ? 'not-allowed' : 'pointer', fontWeight: 'bold', marginTop: '0.5rem' }}
                     >
                         {loading ? 'Initializing Block...' : 'Publish New Schedule Tuple'}
                     </button>
