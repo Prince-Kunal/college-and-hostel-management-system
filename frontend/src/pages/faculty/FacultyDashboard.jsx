@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
+import AttendanceQRModal from '../../components/AttendanceQRModal';
 
 const FacultyDashboard = () => {
     const navigate = useNavigate();
@@ -10,6 +11,8 @@ const FacultyDashboard = () => {
     const [startingLive, setStartingLive] = useState(null);
     const [events, setEvents] = useState([]);
     const [enrolledIds, setEnrolledIds] = useState(new Set());
+    const [qrModalOpen, setQrModalOpen] = useState(false);
+    const [selectedScheduleId, setSelectedScheduleId] = useState(null);
     const [enrollingId, setEnrollingId] = useState(null);
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
@@ -151,19 +154,52 @@ const FacultyDashboard = () => {
                                             </div>
                                             <div className="sd-class-time-right">
                                                 <strong className={color}>{cls.startTime} - {cls.endTime}</strong>
-                                                <button
-                                                    onClick={() => handleStartLive(cls.id)}
-                                                    disabled={startingLive === cls.id}
-                                                    style={{
-                                                        padding: '6px 14px', borderRadius: '10px', border: 'none',
-                                                        background: isOngoing ? 'linear-gradient(135deg, #ef4444, #dc2626)' : 'linear-gradient(135deg, #5c5cff, #7c5cff)',
-                                                        color: 'white', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
-                                                        display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap'
-                                                    }}
-                                                >
-                                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-                                                    {startingLive === cls.id ? 'Starting...' : isOngoing ? 'Live Now' : 'Go Live'}
-                                                </button>
+                                                {isOngoing ? (
+                                                    <div style={{ display: 'flex', gap: '8px' }}>
+                                                        <button 
+                                                            onClick={() => {
+                                                                setSelectedScheduleId(cls.id);
+                                                                setQrModalOpen(true);
+                                                            }}
+                                                            style={{
+                                                                padding: '6px 14px', borderRadius: '10px', border: 'none',
+                                                                background: '#10b981',
+                                                                color: 'white', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                                                                display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap'
+                                                            }}
+                                                        >
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><line x1="9" y1="3" x2="9" y2="21"></line></svg>
+                                                            Attendance
+                                                        </button>
+                                                        <button
+                                                            onClick={() => handleStartLive(cls.id)}
+                                                            disabled={startingLive === cls.id}
+                                                            style={{
+                                                                padding: '6px 14px', borderRadius: '10px', border: 'none',
+                                                                background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                                                                color: 'white', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                                                                display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap'
+                                                            }}
+                                                        >
+                                                            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                                            {startingLive === cls.id ? 'Starting...' : 'Live Now'}
+                                                        </button>
+                                                    </div>
+                                                ) : (
+                                                    <button
+                                                        onClick={() => handleStartLive(cls.id)}
+                                                        disabled={startingLive === cls.id}
+                                                        style={{
+                                                            padding: '6px 14px', borderRadius: '10px', border: 'none',
+                                                            background: 'linear-gradient(135deg, #5c5cff, #7c5cff)',
+                                                            color: 'white', fontSize: '12px', fontWeight: '700', cursor: 'pointer',
+                                                            display: 'flex', alignItems: 'center', gap: '4px', whiteSpace: 'nowrap'
+                                                        }}
+                                                    >
+                                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="none"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                                        {startingLive === cls.id ? 'Starting...' : 'Go Live'}
+                                                    </button>
+                                                )}
                                             </div>
                                         </div>
                                     );
@@ -232,6 +268,13 @@ const FacultyDashboard = () => {
                     </div>
                 </main>
             </div>
+            {qrModalOpen && (
+                <AttendanceQRModal 
+                    isOpen={qrModalOpen} 
+                    onClose={() => setQrModalOpen(false)} 
+                    scheduleId={selectedScheduleId} 
+                />
+            )}
         </React.Fragment>
     );
 };

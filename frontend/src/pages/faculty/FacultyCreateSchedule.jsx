@@ -32,9 +32,9 @@ const FacultyCreateSchedule = () => {
     const fetchDependencies = async (facultyId) => {
         try {
             const [resB, resS, resA] = await Promise.all([
-                fetch('http://localhost:8000/api/v1/batches'),
-                fetch('http://localhost:8000/api/v1/subjects'),
-                fetch('http://localhost:8000/api/v1/faculty-assignments')
+                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`)
             ]);
             
             const dbB = await resB.json();

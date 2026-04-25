@@ -29,14 +29,14 @@ const StudentSchedule = () => {
         setLoading(true);
         try {
             // Implicit backend logic maps nested batch queries distinct natively
-            const resSched = await fetch(`http://localhost:8000/api/v1/schedules/student/${user.activeId}`);
+            const resSched = await fetch(`http://${window.location.hostname}:8000/api/v1/schedules/student/${user.activeId}`);
             const dataSched = await resSched.json();
             
             if (!resSched.ok) throw new Error(dataSched.message || 'Error processing nested strictly enrolled tuple arrays distinctly naturally explicitly correctly');
 
             const [resSubjects, resUsers] = await Promise.all([
-                fetch('http://localhost:8000/api/v1/subjects'),
-                fetch('http://localhost:8000/api/v1/admin/users') 
+                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`) 
             ]);
             
             const dataSubjects = await resSubjects.json();
@@ -62,7 +62,7 @@ const StudentSchedule = () => {
 
     const handleJoinClass = async (scheduleId) => {
         try {
-            const res = await fetch(`http://localhost:8000/api/v1/live/join/${scheduleId}?studentId=${user.activeId}`);
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/live/join/${scheduleId}?studentId=${user.activeId}`);
             const data = await res.json();
             if (data.success) {
                 localStorage.setItem("livekit", JSON.stringify({

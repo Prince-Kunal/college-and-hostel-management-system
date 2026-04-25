@@ -12,7 +12,7 @@ const CreateSubject = () => {
         setError(null);
         setSuccess(false);
         try {
-            const res = await fetch('http://localhost:8000/api/v1/subjects', {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/subjects`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name })

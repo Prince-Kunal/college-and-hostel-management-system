@@ -11,7 +11,7 @@ const AdminBatchTable = () => {
 
     const fetchBatchDetails = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/v1/admin/batches-details');
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/admin/batches-details`);
             const data = await res.json();
             
             if (!res.ok) throw new Error(data.message || 'Failed to fetch batch details');

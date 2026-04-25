@@ -32,9 +32,9 @@ const FacultySchedule = () => {
     const fetchDependencies = async () => {
         try {
             const [resA, resB, resS] = await Promise.all([
-                fetch('http://localhost:8000/api/v1/faculty-assignments'),
-                fetch('http://localhost:8000/api/v1/batches'),
-                fetch('http://localhost:8000/api/v1/subjects')
+                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`)
             ]);
             
             const dbA = await resA.json();
@@ -92,7 +92,7 @@ const FacultySchedule = () => {
                 endTime 
             };
 
-            const res = await fetch('http://localhost:8000/api/v1/schedules', {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/schedules`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

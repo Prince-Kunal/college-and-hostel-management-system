@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Outlet, useLocation } from 'react-router-dom';
 import { api } from '../../services/api';
+import QRScannerModal from '../../components/QRScannerModal';
 
 const StudentDashboard = () => {
     const navigate = useNavigate();
@@ -13,6 +14,8 @@ const StudentDashboard = () => {
     const [enrolledIds, setEnrolledIds] = useState(new Set());
     const [enrollingId, setEnrollingId] = useState(null);
     const [joiningId, setJoiningId] = useState(null);
+    const [attendanceData, setAttendanceData] = useState({ percentage: 0, attended: 0, total: 0 });
+    const [scannerOpen, setScannerOpen] = useState(false);
 
     const [isStudentLoading, setIsStudentLoading] = useState(true);
     const [isClassesLoading, setIsClassesLoading] = useState(true);
@@ -20,8 +23,6 @@ const StudentDashboard = () => {
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const todayName = dayNames[new Date().getDay()];
-
-    const staticAttendance = { percentage: 82, classesAttended: 82, totalClasses: 100, asOfDate: "April 22, 2026" };
 
     const parseTime = (timeStr) => {
         if (!timeStr) return 0;
@@ -51,6 +52,16 @@ const StudentDashboard = () => {
                     setStudentData(studentRes);
                 } catch (e) { console.warn("Could not fetch student profile"); }
                 setIsStudentLoading(false);
+
+                // Fetch attendance
+                try {
+                    const att = await api.getStudentAttendance(parsedUser.uid);
+                    setAttendanceData({
+                        percentage: att.percentage || 0,
+                        attended: att.attended || 0,
+                        total: att.total || 0
+                    });
+                } catch (e) { console.error('Failed to fetch attendance'); }
 
                 // Schedules — filter to today's ongoing + upcoming only
                 setIsClassesLoading(true);
@@ -227,20 +238,29 @@ const StudentDashboard = () => {
                                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--sd-success)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                                 <h2>Attendance</h2>
                             </div>
+                            <div className="sd-card-header-right">
+                                <button 
+                                    onClick={() => setScannerOpen(true)}
+                                    style={{ padding: '6px 12px', borderRadius: '8px', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '600', cursor: 'pointer' }}
+                                >
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 7V5a2 2 0 0 1 2-2h2"></path><path d="M17 3h2a2 2 0 0 1 2 2v2"></path><path d="M21 17v2a2 2 0 0 1-2 2h-2"></path><path d="M7 21H5a2 2 0 0 1-2-2v-2"></path></svg>
+                                    Scan QR
+                                </button>
+                            </div>
                         </div>
                         <div style={{ textAlign: 'center', padding: '16px 0' }}>
                             <div style={{ position: 'relative', display: 'inline-block' }}>
                                 <svg width="120" height="120" viewBox="0 0 120 120">
                                     <circle cx="60" cy="60" r="50" fill="none" stroke="#f1f5f9" strokeWidth="10" />
                                     <circle cx="60" cy="60" r="50" fill="none" stroke="var(--sd-success)" strokeWidth="10" strokeLinecap="round"
-                                        strokeDasharray={`${staticAttendance.percentage * 3.14} ${(100 - staticAttendance.percentage) * 3.14}`}
+                                        strokeDasharray={`${attendanceData.percentage * 3.14} ${(100 - attendanceData.percentage) * 3.14}`}
                                         strokeDashoffset="0" transform="rotate(-90 60 60)" style={{ transition: 'stroke-dasharray 1s ease' }} />
-                                    <text x="60" y="56" textAnchor="middle" fontSize="28" fontWeight="800" fill="var(--sd-text-primary)">{staticAttendance.percentage}%</text>
+                                    <text x="60" y="56" textAnchor="middle" fontSize="28" fontWeight="800" fill="var(--sd-text-primary)">{attendanceData.percentage}%</text>
                                     <text x="60" y="74" textAnchor="middle" fontSize="12" fontWeight="500" fill="var(--sd-text-secondary)">Attendance</text>
                                 </svg>
                             </div>
                             <p style={{ fontSize: '13px', color: 'var(--sd-text-secondary)', marginTop: '12px', fontWeight: '500' }}>
-                                {staticAttendance.classesAttended}/{staticAttendance.totalClasses} classes • As of {staticAttendance.asOfDate}
+                                {attendanceData.attended}/{attendanceData.total} classes attended
                             </p>
                         </div>
                     </div>
@@ -291,6 +311,23 @@ const StudentDashboard = () => {
                     </div>
                 </div>
             </main>
+            <QRScannerModal 
+                isOpen={scannerOpen} 
+                onClose={() => {
+                    setScannerOpen(false);
+                    // Refetch attendance to update dashboard after scanning
+                    if (user) {
+                        api.getStudentAttendance(user.uid).then(att => {
+                            setAttendanceData({
+                                percentage: att.percentage || 0,
+                                attended: att.attended || 0,
+                                total: att.total || 0
+                            });
+                        }).catch(() => {});
+                    }
+                }} 
+                studentId={user?.uid} 
+            />
         </div>
     );
 };

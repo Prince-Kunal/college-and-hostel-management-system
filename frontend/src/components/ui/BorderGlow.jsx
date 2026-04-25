@@ -9,12 +9,12 @@ function parseHSL(hslStr) {
 
 function buildGlowVars(glowColor, intensity) {
   const { h, s, l } = parseHSL(glowColor);
-  const base = `${h}deg ${s}% ${l}%`;
+  const base = `${h}deg ${s}% ${l}%';
   const opacities = [100, 60, 50, 40, 30, 20, 10];
   const keys = ['', '-60', '-50', '-40', '-30', '-20', '-10'];
   const vars = {};
   for (let i = 0; i < opacities.length; i++) {
-    vars[`--glow-color${keys[i]}`] = `hsl(${base} / ${Math.min(opacities[i] * intensity, 100)}%)`;
+    vars[`--glow-color${keys[i]}`] = `hsl(${base} / ${Math.min(opacities[i] * intensity, 100)}%)';
   }
   return vars;
 }
@@ -27,9 +27,9 @@ function buildGradientVars(colors) {
   const vars = {};
   for (let i = 0; i < 7; i++) {
     const c = colors[Math.min(COLOR_MAP[i], colors.length - 1)];
-    vars[GRADIENT_KEYS[i]] = `radial-gradient(at ${GRADIENT_POSITIONS[i]}, ${c} 0px, transparent 50%)`;
+    vars[GRADIENT_KEYS[i]] = `radial-gradient(at ${GRADIENT_POSITIONS[i]}, ${c} 0px, transparent 50%)';
   }
-  vars['--gradient-base'] = `linear-gradient(${colors[0]} 0 100%)`;
+  vars['--gradient-base'] = `linear-gradient(${colors[0]} 0 100%)';
   return vars;
 }
 

@@ -21,7 +21,7 @@ const AdminDashboard = () => {
 
     const fetchUsers = async () => {
         try {
-            const res = await fetch('http://localhost:8000/api/v1/admin/users');
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`);
             const data = await res.json();
             if (!res.ok) throw new Error(data.message || 'Failed to fetch users');
             setUsersList(data.data);
@@ -34,7 +34,7 @@ const AdminDashboard = () => {
 
     const updateUserRole = async (userId, newRole) => {
         try {
-            const res = await fetch(`http://localhost:8000/api/v1/admin/users/${userId}`, {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/admin/users/${userId}`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ role: newRole })
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
     const handleDeleteUser = async (userId) => {
         if (!window.confirm("Are you sure you want to disable this user?")) return;
         try {
-            const res = await fetch(`http://localhost:8000/api/v1/admin/users/${userId}`, {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/admin/users/${userId}`, {
                 method: 'DELETE'
             });
             const data = await res.json();
@@ -71,7 +71,7 @@ const AdminDashboard = () => {
         setCreatingUser(true);
         setCreateError(null);
         try {
-            const res = await fetch('http://localhost:8000/api/v1/auth/signup', {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(newUserForm)

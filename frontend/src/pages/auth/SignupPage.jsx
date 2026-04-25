@@ -17,7 +17,7 @@ const SignupPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:8000/api/v1/auth/signup', {
+            const response = await fetch(`http://${window.location.hostname}:8000/api/v1/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

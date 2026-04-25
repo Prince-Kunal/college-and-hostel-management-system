@@ -1,4 +1,4 @@
-const BASE_URL = 'http://localhost:8000/api/v1';
+const BASE_URL = `http://${window.location.hostname}:8000/api/v1`;
 
 const getHeaders = () => {
     const headers = { 'Content-Type': 'application/json' };
@@ -111,4 +111,33 @@ export const api = {
         const data = await response.json();
         return data.data;
     },
+
+    // ── Attendance ──
+    generateQRToken: async (scheduleId) => {
+        const response = await fetch(`${BASE_URL}/attendance/generate`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ scheduleId })
+        });
+        if (!response.ok) throw new Error('Failed to generate QR token');
+        return await response.json();
+    },
+
+    markAttendance: async (token, studentId) => {
+        const response = await fetch(`${BASE_URL}/attendance/mark`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ token, studentId })
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.message || 'Failed to mark attendance');
+        return data;
+    },
+
+    getStudentAttendance: async (studentId) => {
+        const response = await fetch(`${BASE_URL}/attendance/student/${studentId}`, { headers: getHeaders() });
+        if (!response.ok) throw new Error('Failed to fetch student attendance');
+        const data = await response.json();
+        return data.data;
+    }
 };

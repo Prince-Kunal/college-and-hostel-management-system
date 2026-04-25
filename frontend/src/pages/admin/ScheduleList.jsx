@@ -19,10 +19,10 @@ const ScheduleList = () => {
         setLoading(true);
         try {
             const [resSched, resBatches, resSubjects, resUsers] = await Promise.all([
-                fetch('http://localhost:8000/api/v1/schedules'),
-                fetch('http://localhost:8000/api/v1/batches'),
-                fetch('http://localhost:8000/api/v1/subjects'),
-                fetch('http://localhost:8000/api/v1/admin/users')
+                fetch(`http://${window.location.hostname}:8000/api/v1/schedules`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
+                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`)
             ]);
             
             const dataSched = await resSched.json();

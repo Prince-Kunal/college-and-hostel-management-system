@@ -235,3 +235,50 @@ a {
 .sd-empty-state svg { color: var(--sd-text-muted); margin-bottom: 16px; }
 .sd-empty-state h3 { font-size: 16px; font-weight: 700; margin: 0 0 8px 0; color: var(--sd-text-primary); }
 .sd-empty-state p { font-size: 14px; color: var(--sd-text-secondary); margin: 0; font-weight: 500; }
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  /* Header stacking */
+  .sd-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+  .sd-header-right {
+    width: 100%;
+    justify-content: flex-start;
+  }
+  .sd-header-left h1 {
+    font-size: 24px;
+    flex-wrap: wrap;
+  }
+
+  /* Class cards */
+  .sd-class-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .sd-class-icon-box {
+    margin-bottom: 4px;
+  }
+  .sd-class-time-right {
+    text-align: left;
+    width: 100%;
+    align-items: flex-start;
+  }
+  .sd-class-time-right span {
+    justify-content: flex-start;
+  }
+
+  /* Grid adjustment */
+  .sd-grid {
+    gap: 16px;
+  }
+
+  /* Modals */
+  .sd-card {
+    padding: 16px;
+  }
+}

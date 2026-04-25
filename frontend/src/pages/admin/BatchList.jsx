@@ -18,12 +18,12 @@ const BatchList = ({ refreshTrigger }) => {
         setLoading(true);
         try {
             // Fetch batches
-            const resBatches = await fetch('http://localhost:8000/api/v1/batches');
+            const resBatches = await fetch(`http://${window.location.hostname}:8000/api/v1/batches`);
             const dataBatches = await resBatches.json();
             if (dataBatches.success) setBatches(dataBatches.data);
             
             // Fetch users via admin endpoint
-            const resUsers = await fetch('http://localhost:8000/api/v1/admin/users');
+            const resUsers = await fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`);
             const dataUsers = await resUsers.json();
             if (dataUsers.success) {
                 // Filter only users natively flagged as 'student'
@@ -42,7 +42,7 @@ const BatchList = ({ refreshTrigger }) => {
         
         setAssigning(true);
         try {
-            const res = await fetch(`http://localhost:8000/api/v1/batches/${selectedBatch}/assign-student`, {
+            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/batches/${selectedBatch}/assign-student`, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ studentId: selectedStudent })
