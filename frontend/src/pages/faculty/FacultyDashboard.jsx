@@ -14,6 +14,7 @@ const FacultyDashboard = () => {
     const [qrModalOpen, setQrModalOpen] = useState(false);
     const [selectedScheduleId, setSelectedScheduleId] = useState(null);
     const [enrollingId, setEnrollingId] = useState(null);
+    const [unreadCount, setUnreadCount] = useState(0);
 
     const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const todayName = dayNames[new Date().getDay()];
@@ -54,6 +55,12 @@ const FacultyDashboard = () => {
             } catch (e) {
                 console.warn('Could not fetch faculty schedules:', e.message);
             }
+            
+            // Fetch notifications
+            try {
+                const notifs = await api.getNotifications(parsedUser.uid);
+                setUnreadCount(notifs.filter(n => !n.isRead).length);
+            } catch (e) { console.warn('Failed to fetch notifications'); }
             // Fetch events
             try {
                 const allEvents = await api.getEvents();
@@ -108,7 +115,18 @@ const FacultyDashboard = () => {
                         <h1>Welcome, {user?.name || user?.email || "Professor"}! 📚</h1>
                         <span className="sub">Department of Computer Science</span>
                     </div>
-                    <div className="sd-header-right">
+                    <div className="sd-header-right" style={{ display: 'flex', gap: '12px', alignItems: 'center' }}>
+                        <button 
+                            onClick={() => navigate('/faculty/notifications')} 
+                            style={{ background: 'var(--sd-card-bg)', border: '1px solid var(--sd-border)', borderRadius: '50%', width: '40px', height: '40px', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative', color: 'var(--sd-text-secondary)' }}
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                            {unreadCount > 0 && (
+                                <span style={{ position: 'absolute', top: '0', right: '0', background: 'var(--sd-danger)', color: 'white', fontSize: '10px', fontWeight: 'bold', width: '16px', height: '16px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                                    {unreadCount > 9 ? '9+' : unreadCount}
+                                </span>
+                            )}
+                        </button>
                         <button onClick={handleLogout} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'var(--sd-card-bg)', color: 'var(--sd-danger)', border: '1px solid var(--sd-border)' }}>Logout</button>
                     </div>
                 </header>

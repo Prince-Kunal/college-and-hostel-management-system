@@ -38,6 +38,8 @@ import StudentOnboarding from '../pages/student/StudentOnboarding';
 import StudentClasses from '../pages/student/StudentClasses';
 import VideoRoom from '../pages/live/VideoRoom';
 import EventsPage from '../pages/shared/EventsPage';
+import CreateNotification from '../pages/admin/CreateNotification';
+import NotificationsPage from '../pages/shared/NotificationsPage';
 
 const AppRoutes = () => {
     const getRootRedirect = () => {
@@ -70,12 +72,14 @@ const AppRoutes = () => {
                     </Route>
                     <Route path="/student/classes" element={<StudentClasses />} />
                     <Route path="/student/events" element={<EventsPage />} />
+                    <Route path="/student/notifications" element={<NotificationsPage />} />
                 </Route>
                 
                 {/* Admin Only */}
                 <Route element={<ProtectedRoute allowedRoles={['admin']} />}>
                     <Route path="/admin" element={<AdminDashboard />} />
                     <Route path="/admin/events" element={<AdminEvents />} />
+                    <Route path="/admin/notifications/create" element={<CreateNotification />} />
                     <Route path="/batches" element={<BatchList />} />
                     <Route path="/batches-details" element={<AdminBatchTable />} />
                     <Route path="/batches/create" element={<CreateBatch />} />
@@ -96,6 +100,7 @@ const AppRoutes = () => {
                     <Route path="/faculty/classes" element={<FacultyClasses />} />
                     <Route path="/faculty/schedules/create" element={<FacultyCreateSchedule />} />
                     <Route path="/faculty/events" element={<EventsPage />} />
+                    <Route path="/faculty/notifications" element={<NotificationsPage />} />
                 </Route>
 
                 {/* Shared */}

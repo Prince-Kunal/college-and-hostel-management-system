@@ -139,5 +139,33 @@ export const api = {
         if (!response.ok) throw new Error('Failed to fetch student attendance');
         const data = await response.json();
         return data.data;
+    },
+
+    // ── Notifications ──
+    createNotification: async (notificationData) => {
+        const response = await fetch(`${BASE_URL}/notifications`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify(notificationData)
+        });
+        if (!response.ok) throw new Error('Failed to send notification');
+        return await response.json();
+    },
+
+    getNotifications: async (uid) => {
+        const response = await fetch(`${BASE_URL}/notifications/${uid}`, { headers: getHeaders() });
+        if (!response.ok) throw new Error('Failed to fetch notifications');
+        const data = await response.json();
+        return data.data;
+    },
+
+    markNotificationRead: async (notificationId, uid) => {
+        const response = await fetch(`${BASE_URL}/notifications/${notificationId}/read`, {
+            method: 'POST',
+            headers: getHeaders(),
+            body: JSON.stringify({ uid })
+        });
+        if (!response.ok) throw new Error('Failed to mark notification as read');
+        return await response.json();
     }
 };

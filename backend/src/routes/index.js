@@ -10,6 +10,7 @@ import liveRoutes from './live.routes.js';
 import studentRoutes from './student.routes.js';
 import eventRoutes from './event.routes.js';
 import attendanceRoutes from './attendance.routes.js';
+import notificationRoutes from './notification.routes.js';
 
 const router = Router();
 
@@ -25,5 +26,6 @@ router.use('/live', liveRoutes);
 router.use('/student', studentRoutes);
 router.use('/events', eventRoutes);
 router.use('/attendance', attendanceRoutes);
+router.use('/notifications', notificationRoutes);
 
 export default router;
