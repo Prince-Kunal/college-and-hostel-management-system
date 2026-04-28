@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const CreateSubject = () => {
+    const navigate = useNavigate();
     const [name, setName] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -31,40 +33,51 @@ const CreateSubject = () => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '600px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-            <div style={{ padding: '1.5rem', backgroundColor: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: '8px' }}>
-                <h2 style={{ marginTop: 0 }}>Create New Subject</h2>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                {success && <p style={{ color: '#198754', fontWeight: 'bold' }}>Subject created successfully!</p>}
+        <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+            <header className="sd-header">
+                <div className="sd-header-left">
+                    <p>Admin Portal</p>
+                    <h1>Create New Subject 📚</h1>
+                    <span className="sub">Register a new academic subject</span>
+                </div>
+                <div className="sd-header-right">
+                    <button onClick={() => navigate('/subjects')} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'var(--sd-card-bg)', color: 'var(--sd-primary)', border: '1px solid var(--sd-border)' }}>← Back to Subjects</button>
+                </div>
+            </header>
+
+            <div className="sd-card" style={{ maxWidth: '600px', margin: '0 auto', padding: '24px' }}>
+                <h3 className="sd-section-title" style={{ marginBottom: '20px' }}>Subject Details</h3>
+                {error && (
+                    <div style={{ padding: '12px', background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>
+                        {error}
+                    </div>
+                )}
+                {success && (
+                    <div style={{ padding: '12px', background: '#f0fdf4', color: '#16a34a', border: '1px solid #bbf7d0', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>
+                        Subject created successfully!
+                    </div>
+                )}
                 
-                <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', marginTop: '1rem' }}>
+                <form onSubmit={handleCreate} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                     <div>
-                        <label style={{ fontWeight: 'bold', display: 'block', marginBottom: '0.5rem' }}>Subject Name</label>
+                        <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Subject Name</label>
                         <input 
                             type="text" 
                             placeholder="e.g. Data Structures and Algorithms" 
                             value={name} 
                             onChange={(e) => setName(e.target.value)} 
                             required 
-                            style={{ padding: '0.75rem', border: '1px solid #ccc', borderRadius: '4px', width: '100%', boxSizing: 'border-box' }}
+                            style={{ width: '100%', boxSizing: 'border-box', padding: '10px 14px', fontSize: '14px', border: '1.5px solid #e2e8f0', borderRadius: '10px', background: '#f8fafc', color: '#0f172a', outline: 'none' }}
                         />
                     </div>
                     
                     <button 
                         type="submit" 
                         disabled={loading} 
-                        style={{ 
-                            padding: '0.75rem', 
-                            backgroundColor: '#0d6efd', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '4px',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            fontWeight: 'bold',
-                            marginTop: '0.5rem'
-                        }}
+                        className="sd-btn-primary"
+                        style={{ padding: '14px', marginTop: '8px', background: 'linear-gradient(135deg, #5c5cff, #7c5cff)', color: 'white', borderRadius: '10px', fontSize: '15px', fontWeight: '700', border: 'none', cursor: loading ? 'not-allowed' : 'pointer', opacity: loading ? 0.6 : 1 }}
                     >
-                        {loading ? 'Registering Subject...' : 'Create Subject'}
+                        {loading ? 'Registering...' : 'Create Subject'}
                     </button>
                 </form>
             </div>

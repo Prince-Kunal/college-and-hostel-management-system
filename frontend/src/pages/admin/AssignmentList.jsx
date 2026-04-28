@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const AssignmentList = () => {
+    const navigate = useNavigate();
     const [assignments, setAssignments] = useState([]);
     
     // Key/Value Lookups resolving native Firestore ID hashes instantly
@@ -54,37 +56,54 @@ const AssignmentList = () => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '900px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-            <div style={{ padding: '1.5rem', backgroundColor: '#fcf8e3', border: '1px solid #faebcc', borderRadius: '8px' }}>
-                <h2 style={{ marginTop: 0 }}>Faculty Allocation Matrices</h2>
-                {loading && <p style={{ color: '#666' }}>Aligning matrix dataset structures safely...</p>}
-                {error && <p style={{ color: '#dc3545' }}>{error}</p>}
+        <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+            <header className="sd-header">
+                <div className="sd-header-left">
+                    <p>Admin Portal</p>
+                    <h1>Faculty Assignments 🔗</h1>
+                    <span className="sub">View faculty allocations across batches and subjects</span>
+                </div>
+                <div className="sd-header-right">
+                    <button onClick={() => navigate('/assignments/create')} className="sd-btn-primary">+ Map New Faculty</button>
+                </div>
+            </header>
+
+            <div className="sd-card">
+                <h3 className="sd-section-title" style={{ marginBottom: '20px' }}>Faculty Allocation Matrices</h3>
+                {loading && <p style={{ color: '#64748b' }}>Aligning matrix dataset structures safely...</p>}
+                {error && (
+                    <div style={{ padding: '12px', background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>
+                        {error}
+                    </div>
+                )}
 
                 {!loading && !error && (
                     <>
                         {assignments.length === 0 ? (
-                            <p style={{ fontStyle: 'italic', color: '#666' }}>Notice: System matrices currently contain strictly zero tracked faculty assignments inherently.</p>
+                            <p style={{ fontStyle: 'italic', color: '#64748b' }}>Notice: System matrices currently contain strictly zero tracked faculty assignments inherently.</p>
                         ) : (
-                            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', backgroundColor: '#fff', borderRadius: '4px', overflow: 'hidden' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Target Batch</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Academic Subject</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Faculty Identifier</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Mapping Stamp</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {assignments.map(a => (
-                                        <tr key={a.id}>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', fontWeight: 'bold' }}>{batchMap[a.batchId] || a.batchId}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{subjectMap[a.subjectId] || a.subjectId}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#0d6efd', fontWeight: 'bold' }}>{facultyMap[a.facultyId] || a.facultyId}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#6c757d', fontSize: '0.85rem' }}>{new Date(a.createdAt).toLocaleDateString()}</td>
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Target Batch</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Academic Subject</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Faculty Identifier</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Mapping Stamp</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {assignments.map(a => (
+                                            <tr key={a.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                                <td style={{ padding: '16px', color: '#0f172a', fontWeight: '500' }}>{batchMap[a.batchId] || a.batchId}</td>
+                                                <td style={{ padding: '16px', color: '#334155' }}>{subjectMap[a.subjectId] || a.subjectId}</td>
+                                                <td style={{ padding: '16px', color: '#3b82f6', fontWeight: '500' }}>{facultyMap[a.facultyId] || a.facultyId}</td>
+                                                <td style={{ padding: '16px', color: '#64748b', fontSize: '13px' }}>{new Date(a.createdAt).toLocaleDateString()}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </>
                 )}

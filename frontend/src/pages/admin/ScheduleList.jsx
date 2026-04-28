@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const ScheduleList = () => {
+    const navigate = useNavigate();
     const [schedules, setSchedules] = useState([]);
     
     // Key/Value Lookups resolving native Firestore ID hashes instantly
@@ -54,39 +56,56 @@ const ScheduleList = () => {
     };
 
     return (
-        <div style={{ padding: '2rem', maxWidth: '1000px', margin: '0 auto', fontFamily: 'sans-serif' }}>
-            <div style={{ padding: '1.5rem', backgroundColor: '#f0f8ff', border: '1px solid #cce5ff', borderRadius: '8px' }}>
-                <h2 style={{ marginTop: 0 }}>Global Academic Schedules Map</h2>
-                {loading && <p style={{ color: '#666' }}>Fetching scheduling datasets arrays cleanly...</p>}
-                {error && <p style={{ color: '#dc3545' }}>{error}</p>}
+        <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+            <header className="sd-header">
+                <div className="sd-header-left">
+                    <p>Admin Portal</p>
+                    <h1>Schedules 🗓️</h1>
+                    <span className="sub">View and manage all class schedules</span>
+                </div>
+                <div className="sd-header-right">
+                    <button onClick={() => navigate('/schedules/create')} className="sd-btn-primary">+ Add Schedule</button>
+                </div>
+            </header>
+
+            <div className="sd-card">
+                <h3 className="sd-section-title" style={{ marginBottom: '20px' }}>Global Academic Schedules Map</h3>
+                {loading && <p style={{ color: '#64748b' }}>Fetching scheduling datasets...</p>}
+                {error && (
+                    <div style={{ padding: '12px', background: '#fef2f2', color: '#ef4444', border: '1px solid #fecaca', borderRadius: '8px', marginBottom: '16px', fontSize: '14px', fontWeight: '600' }}>
+                        {error}
+                    </div>
+                )}
 
                 {!loading && !error && (
                     <>
                         {schedules.length === 0 ? (
-                            <p style={{ fontStyle: 'italic', color: '#666' }}>No native schedules are actively maintained right now.</p>
+                            <p style={{ fontStyle: 'italic', color: '#64748b' }}>No native schedules are actively maintained right now.</p>
                         ) : (
-                            <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '1rem', backgroundColor: '#fff', borderRadius: '4px', overflow: 'hidden' }}>
-                                <thead>
-                                    <tr>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Day</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Time Range</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Batch</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Subject Tuple</th>
-                                        <th style={{ textAlign: 'left', padding: '1rem', borderBottom: '2px solid #dee2e6', backgroundColor: '#f8f9fa' }}>Leading Faculty Operator</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {schedules.map(s => (
-                                        <tr key={s.id}>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', fontWeight: 'bold' }}>{s.day}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{s.startTime} - {s.endTime}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#0d6efd' }}>{batchMap[s.batchId] || s.batchId}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6' }}>{subjectMap[s.subjectId] || s.subjectId}</td>
-                                            <td style={{ padding: '1rem', borderBottom: '1px solid #dee2e6', color: '#198754', fontWeight: 'bold' }}>{facultyMap[s.facultyId] || s.facultyId}</td>
+                            <div style={{ overflowX: 'auto' }}>
+                                <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '14px' }}>
+                                    <thead>
+                                        <tr>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Day</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Time Range</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Batch</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Subject Tuple</th>
+                                            <th style={{ padding: '12px 16px', borderBottom: '2px solid #e2e8f0', color: '#64748b', fontWeight: '600' }}>Leading Faculty Operator</th>
                                         </tr>
-                                    ))}
-                                </tbody>
-                            </table>
+                                    </thead>
+                                    <tbody>
+                                        {schedules.map(s => (
+                                            <tr key={s.id} style={{ borderBottom: '1px solid #f1f5f9' }}>
+                                                <td style={{ padding: '16px', color: '#0f172a', fontWeight: '600' }}>{s.day}</td>
+                                                <td style={{ padding: '16px', color: '#334155' }}>{s.startTime} - {s.endTime}</td>
+                                                <td style={{ padding: '16px', color: '#3b82f6', fontWeight: '500' }}>{batchMap[s.batchId] || s.batchId}</td>
+                                                <td style={{ padding: '16px', color: '#334155' }}>{subjectMap[s.subjectId] || s.subjectId}</td>
+                                                <td style={{ padding: '16px', color: '#10b981', fontWeight: '500' }}>{facultyMap[s.facultyId] || s.facultyId}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
                         )}
                     </>
                 )}

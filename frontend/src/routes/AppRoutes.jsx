@@ -93,10 +93,9 @@ const AppRoutes = () => {
 
                 {/* Faculty */}
                 <Route element={<ProtectedRoute allowedRoles={['faculty', 'admin']} />}>
-                    <Route path="/faculty" element={<FacultyDashboard />}>
-                        <Route path="schedule" element={<FacultySchedule />} />
-                        <Route path="students" element={<FacultyStudents />} />
-                    </Route>
+                    <Route path="/faculty" element={<FacultyDashboard />} />
+                    <Route path="/faculty/schedule" element={<FacultySchedule />} />
+                    <Route path="/faculty/students" element={<FacultyStudents />} />
                     <Route path="/faculty/classes" element={<FacultyClasses />} />
                     <Route path="/faculty/schedules/create" element={<FacultyCreateSchedule />} />
                     <Route path="/faculty/events" element={<EventsPage />} />

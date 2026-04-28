@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const FacultyStudents = () => {
+    const navigate = useNavigate();
     const [groupedStudents, setGroupedStudents] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -34,50 +36,68 @@ const FacultyStudents = () => {
         }
     };
 
-    const styles = {
-        container: { padding: '2rem', fontFamily: 'sans-serif' },
-        card: { padding: '1.5rem', backgroundColor: '#fff', borderRadius: '8px', border: '1px solid #dee2e6', marginBottom: '1.5rem', boxShadow: '0 2px 4px rgba(0,0,0,0.05)' },
-        header: { color: '#0d6efd', borderBottom: '2px solid #e9ecef', paddingBottom: '0.5rem', marginBottom: '1rem' },
-        list: { listStyleType: 'none', padding: 0, margin: 0, display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1rem' },
-        listItem: { padding: '0.75rem 1rem', backgroundColor: '#f8f9fa', borderRadius: '4px', borderLeft: '4px solid #198754', display: 'flex', alignItems: 'center' },
-        studentIcon: { marginRight: '10px', color: '#6c757d' }
-    };
-
-    if (loading) return <div style={styles.container}>Loading your mapped students...</div>;
-    if (error) return <div style={{...styles.container, color: 'red'}}>Error: {error}</div>;
+    const colors = ['blue', 'purple', 'orange', 'green', 'yellow'];
 
     return (
-        <div style={styles.container}>
-            <h1 style={{ marginBottom: '2rem', color: '#343a40' }}>My Students</h1>
-            
-            {groupedStudents.length === 0 ? (
-                <div style={styles.card}>
-                    <p style={{ color: '#6c757d', fontStyle: 'italic', margin: 0 }}>You currently do not have any students assigned to your batches.</p>
+        <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+            <header className="sd-header">
+                <div className="sd-header-left">
+                    <p>Faculty Portal</p>
+                    <h1>My Students 👨‍🎓</h1>
+                    <span className="sub">Directory of all students in your assigned batches</span>
+                </div>
+                <div className="sd-header-right">
+                    <button onClick={() => navigate('/faculty')} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'var(--sd-card-bg)', color: 'var(--sd-primary)', border: '1px solid var(--sd-border)' }}>← Back</button>
+                </div>
+            </header>
+
+            {loading ? (
+                <div className="sd-grid">
+                    {[1, 2].map(i => <div key={i} className="sd-skeleton sd-skeleton-card"></div>)}
+                </div>
+            ) : error ? (
+                <div className="sd-card" style={{ color: 'var(--sd-danger)', textAlign: 'center', padding: '24px' }}>
+                    Error: {error}
+                </div>
+            ) : groupedStudents.length === 0 ? (
+                <div className="sd-empty-state">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <h3>No Students Assigned</h3>
+                    <p>You currently do not have any students assigned to your batches.</p>
                 </div>
             ) : (
-                groupedStudents.map(group => (
-                    <div key={group.batchId} style={styles.card}>
-                        <h2 style={styles.header}>
-                            Batch: {group.batchName} 
-                            <span style={{ fontSize: '1rem', color: '#6c757d', fontWeight: 'normal', marginLeft: '1rem' }}>
-                                ({group.students.length} students)
-                            </span>
-                        </h2>
-                        
-                        {group.students.length === 0 ? (
-                            <p style={{ color: '#adb5bd', fontStyle: 'italic' }}>No students found in this batch.</p>
-                        ) : (
-                            <ul style={styles.list}>
-                                {group.students.map(s => (
-                                    <li key={s.uid} style={styles.listItem}>
-                                        <span style={styles.studentIcon}>👤</span>
-                                        <span style={{ fontWeight: '500' }}>{s.email}</span>
-                                    </li>
-                                ))}
-                            </ul>
-                        )}
-                    </div>
-                ))
+                <div className="sd-grid">
+                    {groupedStudents.map((group, idx) => (
+                        <div key={group.batchId} className="sd-card">
+                            <h3 className="sd-section-title" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                Batch: {group.batchName} 
+                                <span style={{ fontSize: '12px', background: '#f1f5f9', color: '#64748b', padding: '2px 8px', borderRadius: '12px', fontWeight: 'bold' }}>
+                                    {group.students.length} students
+                                </span>
+                            </h3>
+                            
+                            {group.students.length === 0 ? (
+                                <p style={{ color: 'var(--sd-text-secondary)', fontStyle: 'italic', fontSize: '14px', marginTop: '16px' }}>No students found in this batch.</p>
+                            ) : (
+                                <div className="sd-class-list" style={{ marginTop: '16px' }}>
+                                    {group.students.map((s, i) => {
+                                        const color = colors[idx % colors.length];
+                                        return (
+                                            <div key={s.uid} className="sd-class-card" style={{ padding: '12px', display: 'flex', alignItems: 'center', gap: '12px', background: '#f8fafc', borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: 'none' }}>
+                                                <div className={`sd-class-icon-box ${color}`} style={{ width: '36px', height: '36px', minWidth: '36px' }}>
+                                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                                </div>
+                                                <div className="sd-class-details" style={{ overflow: 'hidden' }}>
+                                                    <h4 style={{ margin: 0, fontSize: '14px', color: '#0f172a', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.email}</h4>
+                                                </div>
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                </div>
             )}
         </div>
     );

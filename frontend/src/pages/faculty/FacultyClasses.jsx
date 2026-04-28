@@ -7,8 +7,6 @@ const FacultyClasses = () => {
     const [classes, setClasses] = useState([]);
     const [loading, setLoading] = useState(true);
 
-    const dayOrder = { Monday: 1, Tuesday: 2, Wednesday: 3, Thursday: 4, Friday: 5, Saturday: 6, Sunday: 7 };
-
     useEffect(() => {
         const fetchData = async () => {
             const storedUser = localStorage.getItem('user');
@@ -16,7 +14,16 @@ const FacultyClasses = () => {
             const user = JSON.parse(storedUser);
             try {
                 const data = await api.getFacultySchedules(user.uid);
-                const sorted = (data || []).sort((a, b) => (dayOrder[a.day] || 8) - (dayOrder[b.day] || 8));
+                
+                const sorted = (data || []).sort((a, b) => {
+                    const dateA = a.date ? new Date(a.date).getTime() : 0;
+                    const dateB = b.date ? new Date(b.date).getTime() : 0;
+                    if (dateA !== dateB) return dateB - dateA; // Descending by date
+                    const timeA = a.startTime || '00:00';
+                    const timeB = b.startTime || '00:00';
+                    return timeB.localeCompare(timeA); // Descending by time
+                });
+                
                 setClasses(sorted);
             } catch (e) { console.warn('Could not fetch faculty classes'); }
             setLoading(false);
@@ -26,10 +33,30 @@ const FacultyClasses = () => {
 
     const colors = ['blue', 'purple', 'orange', 'green', 'yellow'];
 
+    const isClassDone = (dateStr, endTimeStr) => {
+        if (!dateStr || !endTimeStr) return false;
+        const [year, month, day] = dateStr.split('-');
+        let hours = 0, minutes = 0;
+        if (endTimeStr.includes(' ')) {
+            const [time, modifier] = endTimeStr.split(' ');
+            let [h, m] = time.split(':').map(Number);
+            if (modifier === 'PM' && h < 12) h += 12;
+            if (modifier === 'AM' && h === 12) h = 0;
+            hours = h;
+            minutes = m;
+        } else {
+            const [h, m] = endTimeStr.split(':').map(Number);
+            hours = h;
+            minutes = m;
+        }
+        const endDateTime = new Date(year, month - 1, day, hours, minutes);
+        return new Date() > endDateTime;
+    };
+
     const grouped = classes.reduce((acc, cls) => {
-        const day = cls.day || 'Unscheduled';
-        if (!acc[day]) acc[day] = [];
-        acc[day].push(cls);
+        const dateStr = cls.date ? new Date(cls.date).toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' }) : 'Unscheduled';
+        if (!acc[dateStr]) acc[dateStr] = [];
+        acc[dateStr].push(cls);
         return acc;
     }, {});
 
@@ -38,8 +65,8 @@ const FacultyClasses = () => {
             <header className="sd-header">
                 <div className="sd-header-left">
                     <p>Faculty Portal</p>
-                    <h1>All Classes 📖</h1>
-                    <span className="sub">Your complete weekly teaching schedule</span>
+                    <h1>Class History 📖</h1>
+                    <span className="sub">Your complete teaching schedule according to date</span>
                 </div>
                 <div className="sd-header-right" style={{ display: 'flex', gap: '12px' }}>
                     <button onClick={() => navigate('/faculty/schedules/create')} className="sd-btn-primary" style={{ padding: '8px 16px', background: 'linear-gradient(135deg, #5c5cff, #7c5cff)', color: 'white', border: 'none', display: 'flex', alignItems: 'center', gap: '6px' }}>
@@ -61,14 +88,15 @@ const FacultyClasses = () => {
                     <p>You haven't been assigned any classes yet.</p>
                 </div>
             ) : (
-                Object.entries(grouped).map(([day, dayCls]) => (
-                    <div key={day} className="sd-card" style={{ marginBottom: '20px' }}>
-                        <h3 className="sd-section-title">{day}</h3>
+                Object.entries(grouped).map(([dateLabel, dayCls]) => (
+                    <div key={dateLabel} className="sd-card" style={{ marginBottom: '20px' }}>
+                        <h3 className="sd-section-title">{dateLabel}</h3>
                         <div className="sd-class-list">
                             {dayCls.map((cls, i) => {
                                 const color = colors[i % colors.length];
+                                const done = isClassDone(cls.date, cls.endTime);
                                 return (
-                                    <div key={cls.id || i} className="sd-class-card">
+                                    <div key={cls.id || i} className="sd-class-card" style={{ opacity: done ? 0.6 : 1 }}>
                                         <div className={`sd-class-icon-box ${color}`}>
                                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="16 18 22 12 16 6"></polyline><polyline points="8 6 2 12 8 18"></polyline></svg>
                                         </div>
@@ -78,8 +106,13 @@ const FacultyClasses = () => {
                                                 <span>{cls.day} • {cls.location || 'Room TBD'}</span>
                                             </div>
                                         </div>
-                                        <div className="sd-class-time-right">
+                                        <div className="sd-class-time-right" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
                                             <strong className={color}>{cls.startTime} - {cls.endTime}</strong>
+                                            {done ? (
+                                                <span style={{ fontSize: '11px', fontWeight: 'bold', background: '#e2e8f0', color: '#475569', padding: '2px 8px', borderRadius: '12px' }}>Done</span>
+                                            ) : (
+                                                <span style={{ fontSize: '11px', fontWeight: 'bold', background: '#dcfce7', color: '#16a34a', padding: '2px 8px', borderRadius: '12px' }}>Upcoming</span>
+                                            )}
                                         </div>
                                     </div>
                                 );

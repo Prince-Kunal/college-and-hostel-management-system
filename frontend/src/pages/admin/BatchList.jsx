@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const BatchList = ({ refreshTrigger }) => {
+    const navigate = useNavigate();
     const [batches, setBatches] = useState([]);
     const [students, setStudents] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -69,77 +71,75 @@ const BatchList = ({ refreshTrigger }) => {
     };
     const batchNameMap = getBatchNameMap();
 
-    if (loading) return <p>Loading batches and directory...</p>;
-
     return (
-        <div>
-            {/* View Batches List */}
-            <div style={{ padding: '1.5rem', backgroundColor: '#f8f9fa', border: '1px solid #e9ecef', borderRadius: '8px', marginBottom: '1.5rem' }}>
-                <h2 style={{ marginTop: 0 }}>Active Batches</h2>
-                {batches.length === 0 ? <p>No batches registered yet.</p> : (
-                    <ul style={{ paddingLeft: '20px', lineHeight: '1.8' }}>
-                        {batches.map(b => (
-                            <li key={b.id}>
-                                <strong>{b.name}</strong> <span style={{ color: '#666', fontSize: '0.9rem' }}>— Created on {new Date(b.createdAt).toLocaleDateString()}</span>
-                            </li>
-                        ))}
-                    </ul>
-                )}
-            </div>
+        <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+            <header className="sd-header">
+                <div className="sd-header-left">
+                    <p>Admin Portal</p>
+                    <h1>Batch Management 👥</h1>
+                    <span className="sub">Manage batches and assign students</span>
+                </div>
+                <div className="sd-header-right">
+                    <button onClick={() => navigate('/batches/create')} className="sd-btn-primary">+ Create New Batch</button>
+                </div>
+            </header>
 
-            {/* Assign Student Module */}
-            <div style={{ padding: '1.5rem', backgroundColor: '#fcf8e3', border: '1px solid #faebcc', borderRadius: '8px' }}>
-                <h2 style={{ marginTop: 0 }}>Assign Student to Batch</h2>
-                <form onSubmit={handleAssign} style={{ display: 'flex', flexDirection: 'column', gap: '1rem', maxWidth: '400px' }}>
-                    
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Select Batch</label>
-                        <select 
-                            value={selectedBatch} 
-                            onChange={e => setSelectedBatch(e.target.value)} 
-                            required 
-                            style={{ padding: '0.75rem', width: '100%', borderRadius: '4px', border: '1px solid #ccc' }}
-                        >
-                            <option value="">-- Select Target Batch --</option>
-                            {batches.map(b => <option value={b.id} key={b.id}>{b.name}</option>)}
-                        </select>
-                    </div>
-                    
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: 'bold' }}>Select Student</label>
-                        <select 
-                            value={selectedStudent} 
-                            onChange={e => setSelectedStudent(e.target.value)} 
-                            required 
-                            style={{ padding: '0.75rem', width: '100%', borderRadius: '4px', border: '1px solid #ccc' }}
-                        >
-                            <option value="">-- Choose Student --</option>
-                            {students.map(s => (
-                                <option value={s.id} key={s.id}>
-                                    {s.email} {s.batchId ? `(Currently: ${batchNameMap[s.batchId] || s.batchId})` : ''}
-                                </option>
+            <div className="sd-grid">
+                {/* View Batches List */}
+                <div className="sd-card">
+                    <h3 className="sd-section-title">Active Batches</h3>
+                    {loading ? <p>Loading batches...</p> : batches.length === 0 ? <p style={{ fontStyle: 'italic', color: '#666' }}>No batches registered yet.</p> : (
+                        <div className="sd-class-list">
+                            {batches.map(b => (
+                                <div key={b.id} className="sd-class-item">
+                                    <div className="sd-class-info">
+                                        <div className="sd-class-header">
+                                            <h3>{b.name}</h3>
+                                        </div>
+                                        <div className="sd-class-meta">
+                                            <span>Created on {new Date(b.createdAt).toLocaleDateString()}</span>
+                                        </div>
+                                    </div>
+                                </div>
                             ))}
-                        </select>
-                    </div>
-                    
-                    <button 
-                        type="submit" 
-                        disabled={assigning || !selectedBatch || !selectedStudent} 
-                        style={{ 
-                            padding: '0.75rem', 
-                            backgroundColor: '#28a745', 
-                            color: 'white', 
-                            border: 'none', 
-                            borderRadius: '4px',
-                            fontWeight: 'bold',
-                            cursor: assigning ? 'not-allowed' : 'pointer',
-                            marginTop: '0.5rem'
-                        }}
-                    >
-                        {assigning ? 'Assigning Record...' : 'Confirm Assignment'}
-                    </button>
-                    
-                </form>
+                        </div>
+                    )}
+                </div>
+
+                {/* Assign Student Module */}
+                <div className="sd-card">
+                    <h3 className="sd-section-title" style={{ marginBottom: '20px' }}>Assign Student to Batch</h3>
+                    <form onSubmit={handleAssign} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                        <div>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Select Batch</label>
+                            <select value={selectedBatch} onChange={e => setSelectedBatch(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', padding: '10px 14px', fontSize: '14px', border: '1.5px solid #e2e8f0', borderRadius: '10px', background: '#f8fafc', color: '#0f172a', outline: 'none' }}>
+                                <option value="">-- Select Target Batch --</option>
+                                {batches.map(b => <option value={b.id} key={b.id}>{b.name}</option>)}
+                            </select>
+                        </div>
+                        
+                        <div>
+                            <label style={{ display: 'block', fontSize: '13px', fontWeight: '600', color: '#374151', marginBottom: '6px' }}>Select Student</label>
+                            <select value={selectedStudent} onChange={e => setSelectedStudent(e.target.value)} required style={{ width: '100%', boxSizing: 'border-box', padding: '10px 14px', fontSize: '14px', border: '1.5px solid #e2e8f0', borderRadius: '10px', background: '#f8fafc', color: '#0f172a', outline: 'none' }}>
+                                <option value="">-- Choose Student --</option>
+                                {students.map(s => (
+                                    <option value={s.id} key={s.id}>
+                                        {s.email} {s.batchId ? `(Currently: ${batchNameMap[s.batchId] || s.batchId})` : ''}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+                        
+                        <button 
+                            type="submit" 
+                            disabled={assigning || !selectedBatch || !selectedStudent} 
+                            className="sd-btn-primary"
+                            style={{ padding: '14px', marginTop: '8px', background: 'linear-gradient(135deg, #10b981, #059669)', color: 'white', borderRadius: '10px', fontSize: '15px', fontWeight: '700', border: 'none', cursor: (assigning || !selectedBatch || !selectedStudent) ? 'not-allowed' : 'pointer', opacity: (assigning || !selectedBatch || !selectedStudent) ? 0.6 : 1 }}
+                        >
+                            {assigning ? 'Assigning...' : 'Confirm Assignment'}
+                        </button>
+                    </form>
+                </div>
             </div>
         </div>
     );
