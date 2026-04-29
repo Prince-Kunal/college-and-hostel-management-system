@@ -3,6 +3,9 @@ import { useNavigate, Link } from 'react-router-dom';
 import MagicRings from '../../components/MagicRings/MagicRings';
 import BorderGlow from '../../components/BorderGlow/BorderGlow';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const SignupPage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '', role: 'student' });
@@ -19,7 +22,7 @@ const SignupPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`http://${window.location.hostname}:8000/api/v1/auth/signup`, {
+            const response = await fetch(`${API}/auth/signup`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

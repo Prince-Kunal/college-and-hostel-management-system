@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const FacultySchedule = () => {
     const [user, setUser] = useState(null);
     const [myAssignments, setMyAssignments] = useState([]);
@@ -32,9 +35,9 @@ const FacultySchedule = () => {
     const fetchDependencies = async () => {
         try {
             const [resA, resB, resS] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`)
+                fetch(`${API}/faculty-assignments`),
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`)
             ]);
             
             const dbA = await resA.json();
@@ -92,7 +95,7 @@ const FacultySchedule = () => {
                 endTime 
             };
 
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/schedules`, {
+            const res = await fetch(`${API}/schedules`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

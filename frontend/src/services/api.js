@@ -1,4 +1,7 @@
-const BASE_URL = `http://${window.location.hostname}:8000/api/v1`;
+
+const API = import.meta.env.VITE_API_BASE_URL;
+
+const BASE_URL = `${API}`;
 
 const getHeaders = () => {
     const headers = { 'Content-Type': 'application/json' };

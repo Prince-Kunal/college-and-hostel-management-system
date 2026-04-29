@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const CreateAssignment = () => {
     const navigate = useNavigate();
     const [batches, setBatches] = useState([]);
@@ -22,9 +25,9 @@ const CreateAssignment = () => {
     const fetchDependencies = async () => {
         try {
             const [resBatches, resSubjects, resUsers] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`)
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`),
+                fetch(`${API}/admin/users`)
             ]);
             
             const dataBatches = await resBatches.json();
@@ -48,7 +51,7 @@ const CreateAssignment = () => {
         setSuccess(false);
 
         try {
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`, {
+            const res = await fetch(`${API}/faculty-assignments`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ batchId, subjectId, facultyId })

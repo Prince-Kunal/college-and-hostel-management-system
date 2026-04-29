@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const FacultyStudents = () => {
     const navigate = useNavigate();
     const [groupedStudents, setGroupedStudents] = useState([]);
@@ -23,7 +26,7 @@ const FacultyStudents = () => {
 
     const fetchMyStudents = async (facultyId) => {
         try {
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/faculty/my-students/${facultyId}`);
+            const res = await fetch(`${API}/faculty/my-students/${facultyId}`);
             const data = await res.json();
             
             if (!res.ok) throw new Error(data.message || 'Failed to fetch your students');

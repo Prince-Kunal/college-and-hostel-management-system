@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const CreateSchedule = () => {
     const navigate = useNavigate();
     const [batches, setBatches] = useState([]);
@@ -27,10 +30,10 @@ const CreateSchedule = () => {
     const fetchDependencies = async () => {
         try {
             const [resB, resS, resU, resA] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`)
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`),
+                fetch(`${API}/admin/users`),
+                fetch(`${API}/faculty-assignments`)
             ]);
             
             const dbB = await resB.json();
@@ -81,7 +84,7 @@ const CreateSchedule = () => {
             const payload = { batchId, subjectId, date, day, startTime, endTime };
             if (facultyId) payload.facultyId = facultyId;
 
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/schedules`, {
+            const res = await fetch(`${API}/schedules`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

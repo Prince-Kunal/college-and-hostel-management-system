@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const CreateBatch = ({ onBatchCreated }) => {
     const navigate = useNavigate();
     const [name, setName] = useState('');
@@ -12,7 +15,7 @@ const CreateBatch = ({ onBatchCreated }) => {
         setLoading(true);
         setError(null);
         try {
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/batches`, {
+            const res = await fetch(`${API}/batches`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ name })

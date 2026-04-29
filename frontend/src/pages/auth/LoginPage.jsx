@@ -4,6 +4,9 @@ import { api } from '../../services/api';
 import MagicRings from '../../components/MagicRings/MagicRings';
 import BorderGlow from '../../components/BorderGlow/BorderGlow';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const LoginPage = () => {
     const navigate = useNavigate();
     const [formData, setFormData] = useState({ email: '', password: '' });
@@ -20,7 +23,7 @@ const LoginPage = () => {
         setLoading(true);
 
         try {
-            const response = await fetch(`http://${window.location.hostname}:8000/api/v1/auth/login`, {
+            const response = await fetch(`${API}/auth/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),

@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const AssignmentList = () => {
     const navigate = useNavigate();
     const [assignments, setAssignments] = useState([]);
@@ -21,10 +24,10 @@ const AssignmentList = () => {
         setLoading(true);
         try {
             const [resAssign, resBatches, resSubjects, resUsers] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`)
+                fetch(`${API}/faculty-assignments`),
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`),
+                fetch(`${API}/admin/users`)
             ]);
             
             const dataAssign = await resAssign.json();

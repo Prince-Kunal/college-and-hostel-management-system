@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const ScheduleList = () => {
     const navigate = useNavigate();
     const [schedules, setSchedules] = useState([]);
@@ -21,10 +24,10 @@ const ScheduleList = () => {
         setLoading(true);
         try {
             const [resSched, resBatches, resSubjects, resUsers] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/schedules`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/admin/users`)
+                fetch(`${API}/schedules`),
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`),
+                fetch(`${API}/admin/users`)
             ]);
             
             const dataSched = await resSched.json();

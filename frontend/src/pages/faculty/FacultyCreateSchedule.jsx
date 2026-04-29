@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const FacultyCreateSchedule = () => {
     const navigate = useNavigate();
     const [batches, setBatches] = useState([]);
@@ -32,9 +35,9 @@ const FacultyCreateSchedule = () => {
     const fetchDependencies = async (facultyId) => {
         try {
             const [resB, resS, resA] = await Promise.all([
-                fetch(`http://${window.location.hostname}:8000/api/v1/batches`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/subjects`),
-                fetch(`http://${window.location.hostname}:8000/api/v1/faculty-assignments`)
+                fetch(`${API}/batches`),
+                fetch(`${API}/subjects`),
+                fetch(`${API}/faculty-assignments`)
             ]);
             
             const dbB = await resB.json();

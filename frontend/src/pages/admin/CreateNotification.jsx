@@ -2,6 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../../services/api';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const CreateNotification = () => {
     const navigate = useNavigate();
     const [title, setTitle] = useState('');
@@ -17,7 +20,7 @@ const CreateNotification = () => {
         const fetchBatches = async () => {
             try {
                 // Since api.js doesn't have getBatches yet, we fetch manually like other admin pages
-                const res = await fetch(`http://${window.location.hostname}:8000/api/v1/batches`);
+                const res = await fetch(`${API}/batches`);
                 const data = await res.json();
                 if (data.success) {
                     setBatches(data.data);

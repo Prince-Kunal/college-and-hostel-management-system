@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+const API = import.meta.env.VITE_API_BASE_URL;
+
+
 const SubjectList = () => {
     const navigate = useNavigate();
     const [subjects, setSubjects] = useState([]);
@@ -13,7 +16,7 @@ const SubjectList = () => {
 
     const fetchSubjects = async () => {
         try {
-            const res = await fetch(`http://${window.location.hostname}:8000/api/v1/subjects`);
+            const res = await fetch(`${API}/subjects`);
             const data = await res.json();
             
             if (!res.ok) throw new Error(data.message || 'Failed to fetch subjects');
