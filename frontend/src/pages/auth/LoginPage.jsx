@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { api } from '../../services/api';
+import MagicRings from '../../components/MagicRings/MagicRings';
+import BorderGlow from '../../components/BorderGlow/BorderGlow';
 
 const LoginPage = () => {
     const navigate = useNavigate();
@@ -65,75 +67,83 @@ const LoginPage = () => {
 
     return (
         <div style={styles.page}>
+            {/* Dynamic React Bits Background */}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
+                <MagicRings
+                    color="#5c5cff"
+                    colorTwo="#8b5cf6"
+                    speed={1}
+                    opacity={0.3}
+                    ringCount={5}
+                    followMouse={false}
+                    clickBurst={true}
+                />
+            </div>
+
             {/* Background decorations matching dashboard */}
             <div style={styles.glowBlob}></div>
             <div style={styles.dotPattern}></div>
 
             <div style={styles.container}>
-                {/* Branding */}
-                <div style={styles.brand}>
-                    <div style={styles.logoIcon}>
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
-                    </div>
-                    <h1 style={styles.brandTitle}>Campus Hub</h1>
-                    <p style={styles.brandSub}>College & Hostel Management System</p>
-                </div>
-
                 {/* Login Card */}
-                <div style={styles.card}>
-                    <h2 style={styles.cardTitle}>Welcome back</h2>
-                    <p style={styles.cardSub}>Sign in to your account to continue</p>
+                <BorderGlow
+                    backgroundColor="#ffffff"
+                    borderRadius={20}
+                    glowColor="240 80 80"
+                    colors={['#5c5cff', '#8b5cf6', '#a2a2ff']}
+                >
+                    <div style={styles.cardContent}>
+                        <h2 style={styles.cardTitle}>Welcome back</h2>
+                        <p style={styles.cardSub}>Sign in to your account to continue</p>
 
-                    {error && (
-                        <div style={styles.errorBox}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                            {error}
-                        </div>
-                    )}
+                        {error && (
+                            <div style={styles.errorBox}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                {error}
+                            </div>
+                        )}
 
-                    <form onSubmit={handleLogin}>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Email</label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="you@example.com"
-                                value={formData.email}
-                                onChange={handleChange}
-                                style={styles.input}
-                                required
-                            />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Password</label>
-                            <input
-                                type="password"
-                                name="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                style={styles.input}
-                                required
-                            />
-                        </div>
-                        <button type="submit" disabled={loading} style={styles.button}>
-                            {loading ? (
-                                <span style={styles.loadingText}>
-                                    <span style={styles.spinner}></span>
-                                    Signing in...
-                                </span>
-                            ) : 'Sign In'}
-                        </button>
-                    </form>
+                        <form onSubmit={handleLogin}>
+                            <div style={styles.field}>
+                                <label style={styles.label}>Email</label>
+                                <input
+                                    type="email"
+                                    name="email"
+                                    placeholder="you@example.com"
+                                    value={formData.email}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+                            <div style={styles.field}>
+                                <label style={styles.label}>Password</label>
+                                <input
+                                    type="password"
+                                    name="password"
+                                    placeholder="••••••••"
+                                    value={formData.password}
+                                    onChange={handleChange}
+                                    style={styles.input}
+                                    required
+                                />
+                            </div>
+                            <button type="submit" disabled={loading} style={styles.button}>
+                                {loading ? (
+                                    <span style={styles.loadingText}>
+                                        <span style={styles.spinner}></span>
+                                        Signing in...
+                                    </span>
+                                ) : 'Sign In'}
+                            </button>
+                        </form>
 
-                    <div style={styles.footer}>
-                        <span style={styles.footerText}>Don't have an account?</span>
-                        <Link to="/signup" style={styles.link}>Create account</Link>
+                        <div style={styles.footer}>
+                            <span style={styles.footerText}>Don't have an account?</span>
+                            <Link to="/signup" style={styles.link}>Create account</Link>
+                        </div>
                     </div>
-                </div>
+                </BorderGlow>
             </div>
         </div>
     );
@@ -204,12 +214,10 @@ const styles = {
         color: '#64748b',
         margin: 0,
     },
-    card: {
-        background: '#ffffff',
-        borderRadius: '20px',
+    cardContent: {
         padding: '32px',
-        boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)',
-        border: '1px solid #f1f5f9',
+        position: 'relative',
+        zIndex: 2,
     },
     cardTitle: {
         fontSize: '22px',

@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import MagicRings from '../../components/MagicRings/MagicRings';
+import BorderGlow from '../../components/BorderGlow/BorderGlow';
 
 const SignupPage = () => {
     const navigate = useNavigate();
@@ -48,58 +50,67 @@ const SignupPage = () => {
 
     return (
         <div style={styles.page}>
+            {/* Dynamic React Bits Background */}
+            <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1 }}>
+                <MagicRings
+                    color="#10b981"
+                    colorTwo="#5c5cff"
+                    speed={1}
+                    opacity={0.3}
+                    ringCount={5}
+                    followMouse={false}
+                    clickBurst={true}
+                />
+            </div>
+
             <div style={styles.glowBlob}></div>
             <div style={styles.dotPattern}></div>
 
             <div style={styles.container}>
-                <div style={styles.brand}>
-                    <div style={styles.logoIcon}>
-                        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                            <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
-                            <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
-                        </svg>
+                <BorderGlow
+                    backgroundColor="#ffffff"
+                    borderRadius={20}
+                    glowColor="160 80 80"
+                    colors={['#10b981', '#34d399', '#6ee7b7']}
+                >
+                    <div style={styles.cardContent}>
+                        <h2 style={styles.cardTitle}>Get Started</h2>
+                        <p style={styles.cardSub}>Fill in your details to create an account</p>
+
+                        {error && (
+                            <div style={styles.errorBox}>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                                {error}
+                            </div>
+                        )}
+
+                        <form onSubmit={handleSignup}>
+                            <div style={styles.field}>
+                                <label style={styles.label}>Email</label>
+                                <input type="email" name="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} style={styles.input} required />
+                            </div>
+                            <div style={styles.field}>
+                                <label style={styles.label}>Password</label>
+                                <input type="password" name="password" placeholder="Min. 6 characters" value={formData.password} onChange={handleChange} style={styles.input} required />
+                            </div>
+                            <div style={styles.field}>
+                                <label style={styles.label}>Role</label>
+                                <select name="role" value={formData.role} onChange={handleChange} style={styles.input}>
+                                    <option value="student">Student</option>
+                                    <option value="faculty">Faculty</option>
+                                </select>
+                            </div>
+                            <button type="submit" disabled={loading} style={styles.button}>
+                                {loading ? 'Creating account...' : 'Create Account'}
+                            </button>
+                        </form>
+
+                        <div style={styles.footer}>
+                            <span style={styles.footerText}>Already have an account?</span>
+                            <Link to="/login" style={styles.link}>Sign in</Link>
+                        </div>
                     </div>
-                    <h1 style={styles.brandTitle}>Campus Hub</h1>
-                    <p style={styles.brandSub}>Create your account</p>
-                </div>
-
-                <div style={styles.card}>
-                    <h2 style={styles.cardTitle}>Get Started</h2>
-                    <p style={styles.cardSub}>Fill in your details to create an account</p>
-
-                    {error && (
-                        <div style={styles.errorBox}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
-                            {error}
-                        </div>
-                    )}
-
-                    <form onSubmit={handleSignup}>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Email</label>
-                            <input type="email" name="email" placeholder="you@example.com" value={formData.email} onChange={handleChange} style={styles.input} required />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Password</label>
-                            <input type="password" name="password" placeholder="Min. 6 characters" value={formData.password} onChange={handleChange} style={styles.input} required />
-                        </div>
-                        <div style={styles.field}>
-                            <label style={styles.label}>Role</label>
-                            <select name="role" value={formData.role} onChange={handleChange} style={styles.input}>
-                                <option value="student">Student</option>
-                                <option value="faculty">Faculty</option>
-                            </select>
-                        </div>
-                        <button type="submit" disabled={loading} style={styles.button}>
-                            {loading ? 'Creating account...' : 'Create Account'}
-                        </button>
-                    </form>
-
-                    <div style={styles.footer}>
-                        <span style={styles.footerText}>Already have an account?</span>
-                        <Link to="/login" style={styles.link}>Sign in</Link>
-                    </div>
-                </div>
+                </BorderGlow>
             </div>
         </div>
     );
@@ -110,11 +121,7 @@ const styles = {
     glowBlob: { position: 'absolute', top: '-200px', right: '-200px', width: '700px', height: '700px', background: 'radial-gradient(circle, rgba(16, 185, 129, 0.15) 0%, rgba(92, 92, 255, 0.1) 30%, transparent 70%)', borderRadius: '50%', pointerEvents: 'none' },
     dotPattern: { position: 'absolute', top: '60px', right: '220px', width: '160px', height: '120px', backgroundImage: 'radial-gradient(rgba(100, 116, 139, 0.15) 2px, transparent 2px)', backgroundSize: '16px 16px', pointerEvents: 'none' },
     container: { position: 'relative', zIndex: 10, width: '100%', maxWidth: '420px', padding: '24px' },
-    brand: { textAlign: 'center', marginBottom: '32px' },
-    logoIcon: { display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: '56px', height: '56px', borderRadius: '16px', background: 'linear-gradient(135deg, #10b981, #5c5cff)', marginBottom: '16px', boxShadow: '0 4px 16px rgba(16, 185, 129, 0.3)' },
-    brandTitle: { fontSize: '28px', fontWeight: '800', color: '#0f172a', margin: '0 0 4px 0' },
-    brandSub: { fontSize: '14px', fontWeight: '500', color: '#64748b', margin: 0 },
-    card: { background: '#ffffff', borderRadius: '20px', padding: '32px', boxShadow: '0 4px 24px rgba(0, 0, 0, 0.04), 0 1px 2px rgba(0, 0, 0, 0.02)', border: '1px solid #f1f5f9' },
+    cardContent: { padding: '32px', position: 'relative', zIndex: 2 },
     cardTitle: { fontSize: '22px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' },
     cardSub: { fontSize: '14px', fontWeight: '500', color: '#94a3b8', margin: '0 0 24px 0' },
     errorBox: { display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 16px', background: '#fef2f2', border: '1px solid #fecaca', borderRadius: '12px', color: '#ef4444', fontSize: '14px', fontWeight: '600', marginBottom: '20px' },
