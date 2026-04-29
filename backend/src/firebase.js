@@ -26,7 +26,19 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const serviceAccountPath = resolve(__dirname, '../serviceAccountKey.json');
 
 let adminApp;
-if (existsSync(serviceAccountPath)) {
+
+if (process.env.FIREBASE_PRIVATE_KEY && process.env.FIREBASE_CLIENT_EMAIL) {
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n');
+  adminApp = admin.initializeApp({
+    credential: admin.credential.cert({
+      projectId: process.env.FIREBASE_PROJECT_ID,
+      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      privateKey: privateKey,
+    }),
+    projectId: process.env.FIREBASE_PROJECT_ID,
+  });
+  console.log('✅ Firebase Admin SDK initialized with environment variables');
+} else if (existsSync(serviceAccountPath)) {
   const serviceAccount = JSON.parse(readFileSync(serviceAccountPath, 'utf8'));
   adminApp = admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
