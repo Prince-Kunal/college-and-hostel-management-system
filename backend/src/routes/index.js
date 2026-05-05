@@ -12,6 +12,8 @@ import eventRoutes from './event.routes.js';
 import attendanceRoutes from './attendance.routes.js';
 import notificationRoutes from './notification.routes.js';
 
+import hostelRoutes from './hostel.routes.js';
+
 const router = Router();
 
 // Base auth route
@@ -27,5 +29,6 @@ router.use('/student', studentRoutes);
 router.use('/events', eventRoutes);
 router.use('/attendance', attendanceRoutes);
 router.use('/notifications', notificationRoutes);
+router.use('/hostel', hostelRoutes);
 
 export default router;

@@ -1,0 +1,142 @@
+/* frontend/src/pages/live/VideoRoom.css */
+
+.live-room-container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    width: 100%;
+    padding: 20px;
+    box-sizing: border-box;
+    background: transparent; /* Relies on PremiumLayout background */
+}
+
+.live-room-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.back-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 1px solid var(--sd-border);
+    background: white;
+    cursor: pointer;
+    color: var(--sd-text-primary);
+    transition: all 0.2s;
+}
+
+.back-btn:hover {
+    background: #f1f5f9;
+    transform: translateX(-2px);
+}
+
+.room-title {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--sd-text-primary);
+}
+
+.live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.live-dot {
+    width: 8px;
+    height: 8px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse-red 2s infinite;
+}
+
+@keyframes pulse-red {
+    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); }
+    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+}
+
+.livekit-wrapper {
+    flex: 1;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #111;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    position: relative;
+}
+
+/* Custom LiveKit Overrides to look premium */
+.lk-room-container {
+    --lk-bg: #111111;
+    --lk-control-bar-bg: rgba(20, 20, 20, 0.8);
+    --lk-border-radius: 12px;
+}
+
+.lk-control-bar {
+    backdrop-filter: blur(10px);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 1rem;
+}
+
+.lk-button {
+    border-radius: 12px;
+    transition: all 0.2s;
+}
+
+/* Error States */
+.live-room-error {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    padding: 20px;
+}
+
+.error-card {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    border: 1px solid var(--sd-border);
+}
+
+.error-card h2 {
+    color: var(--sd-danger);
+    margin-bottom: 16px;
+}
+
+.error-card p {
+    color: var(--sd-text-secondary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}

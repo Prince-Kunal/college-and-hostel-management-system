@@ -36,6 +36,7 @@ import FacultyCreateSchedule from '../pages/faculty/FacultyCreateSchedule';
 import StudentSchedule from '../pages/student/StudentSchedule';
 import StudentOnboarding from '../pages/student/StudentOnboarding';
 import StudentClasses from '../pages/student/StudentClasses';
+import StudentProfile from '../pages/student/StudentProfile';
 import VideoRoom from '../pages/live/VideoRoom';
 import EventsPage from '../pages/shared/EventsPage';
 import CreateNotification from '../pages/admin/CreateNotification';
@@ -67,6 +68,7 @@ const AppRoutes = () => {
                 {/* Student Only */}
                 <Route element={<ProtectedRoute allowedRoles={['student']} />}>
                     <Route path="/student/onboarding" element={<StudentOnboarding />} />
+                    <Route path="/student/profile" element={<StudentProfile />} />
                     <Route path="/student" element={<StudentDashboard />}>
                         <Route path="schedule" element={<StudentSchedule />} />
                     </Route>
@@ -103,7 +105,7 @@ const AppRoutes = () => {
                 </Route>
 
                 {/* Shared */}
-                <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty']} />}>
+                <Route element={<ProtectedRoute allowedRoles={['admin', 'faculty', 'student']} />}>
                     <Route path="/hostel" element={<HostelDashboard />} />
                 </Route>
 

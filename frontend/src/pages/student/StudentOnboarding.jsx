@@ -11,7 +11,8 @@ const StudentOnboarding = () => {
     const [formData, setFormData] = useState({
         name: '',
         dob: '',
-        phone: ''
+        phone: '',
+        gender: 'male'
     });
 
     useEffect(() => {
@@ -89,6 +90,21 @@ const StudentOnboarding = () => {
                             style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--sd-border)', outline: 'none' }}
                             placeholder="+1 234 567 8900"
                         />
+                    </div>
+
+                    <div>
+                        <label style={{ display: 'block', fontSize: '12px', fontWeight: 'bold', marginBottom: '4px', color: 'var(--sd-text-secondary)' }}>Gender</label>
+                        <select
+                            name="gender"
+                            value={formData.gender}
+                            onChange={handleChange}
+                            required
+                            style={{ width: '100%', padding: '10px', borderRadius: '8px', border: '1px solid var(--sd-border)', outline: 'none', background: 'white' }}
+                        >
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
                     </div>
 
                     <button type="submit" disabled={loading} className="sd-btn-primary" style={{ marginTop: '8px' }}>

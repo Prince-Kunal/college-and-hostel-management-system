@@ -118,6 +118,7 @@ const AdminDashboard = () => {
                             <button onClick={() => navigate('/subjects/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Create Subject</button>
                             <button onClick={() => navigate('/assignments/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Allocate Faculty</button>
                             <button onClick={() => navigate('/schedules/create')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)' }}>+ Deploy Schedule</button>
+                            <button onClick={() => navigate('/hostel')} className="sd-btn-primary" style={{ background: '#f8fafc', color: '#0f172a', border: '1px solid var(--sd-border)', gridColumn: '1 / -1' }}>🏠 Manage Hostel Rooms & Allocations</button>
                         </div>
                     </section>
 
